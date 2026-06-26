@@ -1,5 +1,5 @@
 import { Archive, CheckCircle2, Inbox, Lock, LogOut, Mail, RefreshCw } from "lucide-react";
-import { FormEvent, useEffect, useState } from "react";
+import { FormEvent, useEffect, useMemo, useState } from "react";
 import {
   clearStoredAdminSession,
   fetchReportMessages,
@@ -20,6 +20,25 @@ export function AdminInbox() {
   const [loginId, setLoginId] = useState("");
   const [password, setPassword] = useState("");
   const [status, setStatus] = useState<"idle" | "loading" | "error">("idle");
+  const [statusFilter, setStatusFilter] = useState<"all" | ReportMessage["status"]>("all");
+
+  const messageCounts = useMemo(
+    () => ({
+      all: messages.length,
+      new: messages.filter((message) => message.status === "new").length,
+      read: messages.filter((message) => message.status === "read").length,
+      archived: messages.filter((message) => message.status === "archived").length,
+    }),
+    [messages],
+  );
+
+  const filteredMessages = useMemo(() => {
+    if (statusFilter === "all") {
+      return messages;
+    }
+
+    return messages.filter((message) => message.status === statusFilter);
+  }, [messages, statusFilter]);
 
   const loadMessages = async (activeSession = session) => {
     if (!activeSession) {
@@ -132,6 +151,7 @@ export function AdminInbox() {
                 autoComplete="off"
                 name="hongeomap-admin-page-login-id"
                 onChange={(event) => setLoginId(event.target.value)}
+                required
                 type="text"
                 value={loginId}
               />
@@ -142,6 +162,7 @@ export function AdminInbox() {
                 autoComplete="off"
                 name="hongeomap-admin-page-login-secret"
                 onChange={(event) => setPassword(event.target.value)}
+                required
                 type="password"
                 value={password}
               />
@@ -171,6 +192,9 @@ export function AdminInbox() {
             </div>
           </div>
           <div className="admin-actions">
+            <a className="admin-home-link" href="/">
+              홍어맵
+            </a>
             <button onClick={() => loadMessages()} type="button">
               <RefreshCw size={16} />
               새로고침
@@ -184,15 +208,45 @@ export function AdminInbox() {
 
         {status === "error" && <p className="admin-error">쪽지함을 불러오지 못했습니다. 다시 시도해주세요.</p>}
 
+        <div className="admin-status-tabs" aria-label="제보 상태 필터">
+          {[
+            ["all", "전체", messageCounts.all],
+            ["new", "새 제보", messageCounts.new],
+            ["read", "읽음", messageCounts.read],
+            ["archived", "보관", messageCounts.archived],
+          ].map(([key, label, count]) => (
+            <button
+              aria-pressed={statusFilter === key}
+              className={statusFilter === key ? "is-active" : ""}
+              key={key}
+              onClick={() => setStatusFilter(key as typeof statusFilter)}
+              type="button"
+            >
+              <span>{label}</span>
+              <strong>{count}</strong>
+            </button>
+          ))}
+        </div>
+
         <div className="admin-message-list">
-          {messages.length === 0 && status !== "loading" ? (
+          {status === "loading" ? (
+            <div className="admin-empty">
+              <RefreshCw size={22} />
+              <strong>제보글을 불러오는 중입니다</strong>
+              <p>잠시만 기다려주세요.</p>
+            </div>
+          ) : filteredMessages.length === 0 ? (
             <div className="admin-empty">
               <Mail size={22} />
-              <strong>아직 도착한 제보가 없습니다</strong>
-              <p>방문자가 제보를 보내면 이곳에 게시글처럼 쌓입니다.</p>
+              <strong>{messages.length === 0 ? "아직 도착한 제보가 없습니다" : "이 상태의 제보가 없습니다"}</strong>
+              <p>
+                {messages.length === 0
+                  ? "방문자가 제보를 보내면 이곳에 게시글처럼 쌓입니다."
+                  : "다른 상태 탭을 선택하면 이전 제보를 확인할 수 있습니다."}
+              </p>
             </div>
           ) : (
-            messages.map((message) => (
+            filteredMessages.map((message) => (
               <article className={`admin-message ${message.status}`} key={message.id}>
                 <div className="admin-message-head">
                   <div>

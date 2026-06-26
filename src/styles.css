@@ -1145,7 +1145,8 @@ button {
 .admin-actions button,
 .admin-message-actions button,
 .admin-login-form button,
-.admin-home-link {
+.admin-home-link,
+.admin-status-tabs button {
   display: inline-flex;
   align-items: center;
   justify-content: center;
@@ -1163,6 +1164,11 @@ button {
 
 .admin-actions button:last-child,
 .admin-message-actions button:last-child {
+  color: var(--ink);
+  background: #edf4f0;
+}
+
+.admin-actions .admin-home-link {
   color: var(--ink);
   background: #edf4f0;
 }
@@ -1205,6 +1211,43 @@ button {
 .admin-message-list {
   display: grid;
   gap: 12px;
+}
+
+.admin-status-tabs {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 8px;
+  padding: 8px;
+  border: 1px solid rgba(21, 23, 26, 0.08);
+  border-radius: 8px;
+  background: #f4f8f5;
+}
+
+.admin-status-tabs button {
+  min-height: 38px;
+  color: #3f4744;
+  background: transparent;
+}
+
+.admin-status-tabs button strong {
+  display: inline-grid;
+  min-width: 24px;
+  height: 24px;
+  place-items: center;
+  border-radius: 999px;
+  color: var(--mint);
+  background: rgba(5, 150, 105, 0.1);
+  font-size: 12px;
+}
+
+.admin-status-tabs button.is-active {
+  color: #fff;
+  background: var(--red);
+}
+
+.admin-status-tabs button.is-active strong {
+  color: var(--red-strong);
+  background: #fff;
 }
 
 .admin-empty,
