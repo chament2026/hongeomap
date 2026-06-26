@@ -1040,6 +1040,11 @@ button {
   font-weight: 900;
 }
 
+.report-submit:disabled {
+  cursor: wait;
+  opacity: 0.72;
+}
+
 .report-result {
   display: grid;
   gap: 8px;
@@ -1059,6 +1064,247 @@ button {
   color: #343b40;
   font-size: 13px;
   line-height: 1.5;
+}
+
+.report-result.is-error {
+  border-color: rgba(190, 18, 60, 0.2);
+  background: rgba(225, 29, 72, 0.08);
+}
+
+.report-result.is-error strong {
+  color: var(--marker-red-strong);
+}
+
+.admin-page {
+  min-height: 100vh;
+  padding: 40px 18px;
+  color: var(--ink);
+  background:
+    radial-gradient(circle at 80% 12%, rgba(15, 118, 110, 0.12), transparent 30%),
+    linear-gradient(180deg, #f2faf5, #e7f3ed);
+}
+
+.admin-panel,
+.admin-login {
+  display: grid;
+  gap: 18px;
+  width: min(920px, 100%);
+  margin: 0 auto;
+  padding: 22px;
+  border: 1px solid rgba(21, 23, 26, 0.08);
+  border-radius: 8px;
+  background: rgba(255, 255, 255, 0.94);
+  box-shadow: var(--shadow);
+}
+
+.admin-login {
+  width: min(460px, 100%);
+}
+
+.admin-toolbar,
+.admin-title,
+.admin-actions,
+.admin-message-head,
+.admin-message-actions {
+  display: flex;
+  align-items: center;
+}
+
+.admin-toolbar {
+  justify-content: space-between;
+  gap: 16px;
+}
+
+.admin-title {
+  gap: 10px;
+}
+
+.admin-title svg {
+  color: var(--red-strong);
+}
+
+.admin-title h1 {
+  margin: 0;
+  font-size: 25px;
+  letter-spacing: 0;
+}
+
+.admin-title p {
+  margin: 4px 0 0;
+  color: var(--muted);
+  font-size: 13px;
+}
+
+.admin-actions {
+  flex-wrap: wrap;
+  gap: 8px;
+}
+
+.admin-actions button,
+.admin-message-actions button,
+.admin-login-form button,
+.admin-home-link {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  gap: 7px;
+  min-height: 40px;
+  padding: 0 13px;
+  border: 0;
+  border-radius: 8px;
+  color: #fff;
+  background: var(--red);
+  font-size: 13px;
+  font-weight: 900;
+  text-decoration: none;
+}
+
+.admin-actions button:last-child,
+.admin-message-actions button:last-child {
+  color: var(--ink);
+  background: #edf4f0;
+}
+
+.admin-login-form {
+  display: grid;
+  gap: 12px;
+}
+
+.admin-login-form label {
+  display: grid;
+  gap: 6px;
+}
+
+.admin-login-form span {
+  font-size: 13px;
+  font-weight: 900;
+}
+
+.admin-login-form input {
+  height: 44px;
+  padding: 0 12px;
+  border: 1px solid rgba(21, 23, 26, 0.12);
+  border-radius: 8px;
+  outline: 0;
+  background: #f7f8f8;
+}
+
+.admin-error {
+  margin: 0;
+  padding: 11px 12px;
+  border: 1px solid rgba(225, 29, 72, 0.18);
+  border-radius: 8px;
+  color: var(--marker-red-strong);
+  background: rgba(225, 29, 72, 0.08);
+  font-size: 13px;
+  font-weight: 800;
+}
+
+.admin-message-list {
+  display: grid;
+  gap: 12px;
+}
+
+.admin-empty,
+.admin-message {
+  border: 1px solid rgba(21, 23, 26, 0.08);
+  border-radius: 8px;
+  background: #fff;
+}
+
+.admin-empty {
+  display: grid;
+  gap: 8px;
+  justify-items: start;
+  padding: 22px;
+  color: var(--muted);
+}
+
+.admin-empty strong {
+  color: var(--ink);
+  font-size: 16px;
+}
+
+.admin-empty p {
+  margin: 0;
+  line-height: 1.55;
+}
+
+.admin-empty code {
+  color: var(--red-strong);
+  font-weight: 900;
+}
+
+.admin-message {
+  display: grid;
+  gap: 14px;
+  padding: 17px;
+}
+
+.admin-message.new {
+  border-color: rgba(5, 150, 105, 0.24);
+  box-shadow: inset 4px 0 0 rgba(5, 150, 105, 0.5);
+}
+
+.admin-message.archived {
+  opacity: 0.68;
+}
+
+.admin-message-head {
+  justify-content: space-between;
+  gap: 12px;
+}
+
+.admin-message-head span {
+  color: var(--muted);
+  font-size: 12px;
+  font-weight: 800;
+}
+
+.admin-message-head h2 {
+  margin: 4px 0 0;
+  font-size: 19px;
+  letter-spacing: 0;
+}
+
+.admin-message-head em {
+  flex: 0 0 auto;
+  padding: 6px 9px;
+  border-radius: 999px;
+  color: var(--red-strong);
+  background: rgba(5, 150, 105, 0.1);
+  font-size: 12px;
+  font-style: normal;
+  font-weight: 900;
+}
+
+.admin-message dl {
+  display: grid;
+  gap: 10px;
+  margin: 0;
+}
+
+.admin-message dl div {
+  display: grid;
+  gap: 4px;
+}
+
+.admin-message dt {
+  color: var(--muted);
+  font-size: 12px;
+  font-weight: 900;
+}
+
+.admin-message dd {
+  margin: 0;
+  color: #283037;
+  font-size: 14px;
+  line-height: 1.55;
+}
+
+.admin-message-actions {
+  flex-wrap: wrap;
+  gap: 8px;
 }
 
 .place-detail {

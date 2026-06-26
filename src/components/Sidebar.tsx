@@ -14,13 +14,13 @@ import {
   X,
 } from "lucide-react";
 import { useMemo, type ReactNode } from "react";
-import type { Filters, Restaurant, SortMode } from "../types";
+import type { Filters, LocationStatus, Restaurant, SortMode } from "../types";
 import { koreaRegions } from "../data/regions";
 
 type SidebarProps = {
   filters: Filters;
   distanceByRestaurantId: Map<string, number>;
-  locationStatus: "idle" | "requesting" | "ready" | "error";
+  locationStatus: LocationStatus;
   restaurants: Restaurant[];
   results: Restaurant[];
   selectedRestaurant?: Restaurant;
@@ -125,9 +125,7 @@ export function Sidebar({
       </div>
 
       {sortMode === "distance" && locationStatus !== "ready" && (
-        <p className="sort-message">
-          {locationStatus === "requesting" ? "현재 위치를 확인하고 있습니다." : "위치 권한을 허용하면 가까운 홍어집부터 볼 수 있습니다."}
-        </p>
+        <p className="sort-message">{getLocationMessage(locationStatus)}</p>
       )}
 
       <FilterGroup title="지역별">
@@ -361,4 +359,20 @@ function formatDistance(distanceKm: number) {
   }
 
   return `${distanceKm.toFixed(1)}km`;
+}
+
+function getLocationMessage(locationStatus: LocationStatus) {
+  if (locationStatus === "requesting") {
+    return "현재 위치를 확인하고 있습니다.";
+  }
+
+  if (locationStatus === "unsupported") {
+    return "이 브라우저에서는 위치 기반 거리순을 사용할 수 없습니다.";
+  }
+
+  if (locationStatus === "error") {
+    return "위치 권한이 막혀 거리순을 계산하지 못했습니다. 브라우저 위치 권한을 허용한 뒤 다시 눌러주세요.";
+  }
+
+  return "위치 권한을 허용하면 가까운 홍어집부터 볼 수 있습니다.";
 }

@@ -1,5 +1,6 @@
 import { Send, X } from "lucide-react";
 import { FormEvent, useMemo, useState } from "react";
+import { isReportBackendConfigured, submitReport } from "../lib/reportBackend";
 
 type ReportForm = {
   restaurantName: string;
@@ -16,7 +17,7 @@ const initialForm: ReportForm = {
 export function ReportButton() {
   const [isOpen, setIsOpen] = useState(false);
   const [form, setForm] = useState<ReportForm>(initialForm);
-  const [isSubmitted, setIsSubmitted] = useState(false);
+  const [submitState, setSubmitState] = useState<"idle" | "submitting" | "sent" | "copy-ready" | "error">("idle");
 
   const reportText = useMemo(
     () =>
@@ -31,12 +32,26 @@ export function ReportButton() {
 
   const updateField = (key: keyof ReportForm, value: string) => {
     setForm((current) => ({ ...current, [key]: value }));
-    setIsSubmitted(false);
+    setSubmitState("idle");
   };
 
-  const handleSubmit = (event: FormEvent<HTMLFormElement>) => {
+  const handleSubmit = async (event: FormEvent<HTMLFormElement>) => {
     event.preventDefault();
-    setIsSubmitted(true);
+
+    if (!isReportBackendConfigured) {
+      setSubmitState("copy-ready");
+      return;
+    }
+
+    setSubmitState("submitting");
+
+    try {
+      await submitReport(form);
+      setSubmitState("sent");
+      setForm(initialForm);
+    } catch {
+      setSubmitState("error");
+    }
   };
 
   const copyReport = async () => {
@@ -91,15 +106,32 @@ export function ReportButton() {
                 />
               </label>
 
-              <button className="report-submit" type="submit">
-                제보하기
+              <button className="report-submit" disabled={submitState === "submitting"} type="submit">
+                {submitState === "submitting" ? "보내는 중" : "제보하기"}
               </button>
             </form>
 
-            {isSubmitted && (
+            {submitState === "sent" && (
+              <div className="report-result">
+                <strong>제보가 전송됐습니다</strong>
+                <p>운영자 쪽지함에서 확인할 수 있습니다.</p>
+              </div>
+            )}
+
+            {submitState === "copy-ready" && (
               <div className="report-result">
                 <strong>제보 내용이 준비됐습니다</strong>
-                <p>아래 버튼으로 내용을 복사할 수 있습니다.</p>
+                <p>쪽지함 연결값을 넣으면 자동 전송됩니다. 지금은 아래 버튼으로 내용을 복사할 수 있습니다.</p>
+                <button onClick={copyReport} type="button">
+                  제보 내용 복사
+                </button>
+              </div>
+            )}
+
+            {submitState === "error" && (
+              <div className="report-result is-error">
+                <strong>전송에 실패했습니다</strong>
+                <p>잠시 후 다시 시도하거나 아래 내용 복사로 제보를 전달해주세요.</p>
                 <button onClick={copyReport} type="button">
                   제보 내용 복사
                 </button>

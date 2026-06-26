@@ -1,11 +1,12 @@
 import { useEffect, useMemo, useState } from "react";
 import { Search, SlidersHorizontal, X } from "lucide-react";
+import { AdminInbox } from "./components/AdminInbox";
 import { NaverMap } from "./components/NaverMap";
 import { ReportButton } from "./components/ReportButton";
 import { Sidebar } from "./components/Sidebar";
 import { restaurants } from "./data/restaurants";
 import { koreaRegions } from "./data/regions";
-import type { Filters, Restaurant, SortMode, UserLocation } from "./types";
+import type { Filters, LocationStatus, Restaurant, SortMode, UserLocation } from "./types";
 
 const initialFilters: Filters = {
   query: "",
@@ -13,12 +14,33 @@ const initialFilters: Filters = {
   district: undefined,
 };
 
+const storedLocationKey = "hongeomap:user-location";
+
+function readStoredLocation() {
+  try {
+    const stored = window.localStorage.getItem(storedLocationKey);
+    return stored ? (JSON.parse(stored) as UserLocation) : undefined;
+  } catch {
+    return undefined;
+  }
+}
+
 function App() {
+  const isAdminRoute = window.location.pathname === "/admin";
+
+  if (isAdminRoute) {
+    return <AdminInbox />;
+  }
+
+  return <MapApp />;
+}
+
+function MapApp() {
   const [filters, setFilters] = useState<Filters>(initialFilters);
   const [selectedRestaurant, setSelectedRestaurant] = useState<Restaurant | undefined>();
   const [sortMode, setSortMode] = useState<SortMode>("default");
-  const [userLocation, setUserLocation] = useState<UserLocation | undefined>();
-  const [locationStatus, setLocationStatus] = useState<"idle" | "requesting" | "ready" | "error">("idle");
+  const [userLocation, setUserLocation] = useState<UserLocation | undefined>(() => readStoredLocation());
+  const [locationStatus, setLocationStatus] = useState<LocationStatus>(() => (readStoredLocation() ? "ready" : "idle"));
   const [isMobileDrawerOpen, setIsMobileDrawerOpen] = useState(false);
 
   const filteredRestaurants = useMemo(() => {
@@ -88,24 +110,26 @@ function App() {
     }
 
     if (!navigator.geolocation) {
-      setLocationStatus("error");
+      setLocationStatus("unsupported");
       return;
     }
 
     setLocationStatus("requesting");
     navigator.geolocation.getCurrentPosition(
       (position) => {
-        setUserLocation({
+        const nextLocation = {
           lat: position.coords.latitude,
           lng: position.coords.longitude,
-        });
+        };
+        setUserLocation(nextLocation);
+        window.localStorage.setItem(storedLocationKey, JSON.stringify(nextLocation));
         setLocationStatus("ready");
       },
       () => {
-        setLocationStatus("error");
+        setLocationStatus(userLocation ? "ready" : "error");
       },
       {
-        enableHighAccuracy: false,
+        enableHighAccuracy: true,
         maximumAge: 1000 * 60 * 10,
         timeout: 10000,
       },

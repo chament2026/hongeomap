@@ -4,6 +4,8 @@ export type PriceRange = "low" | "mid" | "high";
 
 export type SortMode = "default" | "distance" | "rating";
 
+export type LocationStatus = "idle" | "requesting" | "ready" | "error" | "unsupported";
+
 export type UserLocation = {
   lat: number;
   lng: number;
