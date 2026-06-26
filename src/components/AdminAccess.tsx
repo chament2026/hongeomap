@@ -14,7 +14,7 @@ export function AdminAccess() {
     isReportBackendConfigured ? getStoredAdminSession() : undefined,
   );
   const [isLoginOpen, setIsLoginOpen] = useState(false);
-  const [email, setEmail] = useState("");
+  const [loginId, setLoginId] = useState("");
   const [password, setPassword] = useState("");
   const [status, setStatus] = useState<"idle" | "checking" | "error" | "not-configured">("idle");
 
@@ -47,9 +47,9 @@ export function AdminAccess() {
     setStatus("checking");
 
     try {
-      const nextSession = await signInAdmin(email, password);
+      const nextSession = await signInAdmin(loginId, password);
       setSession(nextSession);
-      setEmail("");
+      setLoginId("");
       setPassword("");
       setIsLoginOpen(false);
       setStatus("idle");
@@ -96,13 +96,14 @@ export function AdminAccess() {
           </div>
           <form className="admin-login-popover-form" onSubmit={handleSignIn}>
             <label>
-              <span>이메일</span>
+              <span>아이디</span>
               <input
-                autoComplete="email"
-                onChange={(event) => setEmail(event.target.value)}
+                autoComplete="username"
+                onChange={(event) => setLoginId(event.target.value)}
+                placeholder="chament2026"
                 required
-                type="email"
-                value={email}
+                type="text"
+                value={loginId}
               />
             </label>
             <label>

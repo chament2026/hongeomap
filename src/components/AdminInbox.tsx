@@ -17,7 +17,7 @@ export function AdminInbox() {
     isReportBackendConfigured ? getStoredAdminSession() : undefined,
   );
   const [messages, setMessages] = useState<ReportMessage[]>([]);
-  const [email, setEmail] = useState("");
+  const [loginId, setLoginId] = useState("");
   const [password, setPassword] = useState("");
   const [status, setStatus] = useState<"idle" | "loading" | "error">("idle");
 
@@ -57,9 +57,9 @@ export function AdminInbox() {
     setStatus("loading");
 
     try {
-      const nextSession = await signInAdmin(email, password);
+      const nextSession = await signInAdmin(loginId, password);
       setSession(nextSession);
-      setEmail("");
+      setLoginId("");
       setPassword("");
       setStatus("idle");
     } catch {
@@ -127,8 +127,14 @@ export function AdminInbox() {
           </div>
           <form className="admin-login-form" onSubmit={handleSignIn}>
             <label>
-              <span>이메일</span>
-              <input autoComplete="email" onChange={(event) => setEmail(event.target.value)} type="email" value={email} />
+              <span>아이디</span>
+              <input
+                autoComplete="username"
+                onChange={(event) => setLoginId(event.target.value)}
+                placeholder="chament2026"
+                type="text"
+                value={loginId}
+              />
             </label>
             <label>
               <span>비밀번호</span>
@@ -160,7 +166,7 @@ export function AdminInbox() {
             <Inbox size={22} />
             <div>
               <h1>홍어맛집제보</h1>
-              <p>{session.email} 운영자 게시판</p>
+              <p>{session.loginId} 운영자 게시판</p>
             </div>
           </div>
           <div className="admin-actions">

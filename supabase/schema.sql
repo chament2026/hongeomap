@@ -59,9 +59,13 @@ with check (
   )
 );
 
--- Supabase Dashboard > Authentication > Users 에서 운영자 계정을 먼저 만든 뒤,
--- 아래 값을 운영자 user_id/email로 바꿔 1회 실행하세요.
+-- 운영자 아이디를 chament2026 으로 쓰려면
+-- Supabase Dashboard > Authentication > Users 에서 아래 이메일 형식으로 운영자 계정을 먼저 만드세요.
+-- email: chament2026@hongeomap.local
+-- password: 채팅에 입력한 운영자 비밀번호
+--
+-- 계정을 만든 뒤 user_id를 복사해서 아래 값을 바꿔 1회 실행하세요.
 --
 -- insert into public.hongeo_admins (user_id, email)
--- values ('운영자-auth-user-id', 'operator@example.com')
+-- values ('운영자-auth-user-id', 'chament2026@hongeomap.local')
 -- on conflict (user_id) do update set email = excluded.email;

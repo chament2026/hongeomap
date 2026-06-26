@@ -6,7 +6,7 @@ export type ReportSubmission = {
 
 export type AdminSession = {
   accessToken: string;
-  email: string;
+  loginId: string;
 };
 
 export type ReportMessage = {
@@ -20,6 +20,7 @@ export type ReportMessage = {
 
 const supabaseUrl = import.meta.env.VITE_SUPABASE_URL as string | undefined;
 const supabaseAnonKey = import.meta.env.VITE_SUPABASE_ANON_KEY as string | undefined;
+const adminAuthDomain = (import.meta.env.VITE_ADMIN_AUTH_DOMAIN as string | undefined) ?? "hongeomap.local";
 const sessionStorageKey = "hongeomap:admin-session";
 
 export const isReportBackendConfigured = Boolean(supabaseUrl && supabaseAnonKey);
@@ -65,13 +66,29 @@ export async function submitReport(submission: ReportSubmission) {
   }
 }
 
-export async function signInAdmin(email: string, password: string) {
+export function getAdminAuthEmail(loginId: string) {
+  const trimmedLoginId = loginId.trim().toLowerCase();
+
+  if (trimmedLoginId.includes("@")) {
+    return trimmedLoginId;
+  }
+
+  return `${trimmedLoginId}@${adminAuthDomain}`;
+}
+
+function getAdminLoginId(authEmail: string) {
+  const suffix = `@${adminAuthDomain}`;
+  return authEmail.endsWith(suffix) ? authEmail.slice(0, -suffix.length) : authEmail;
+}
+
+export async function signInAdmin(loginId: string, password: string) {
   const backend = assertReportBackend();
+  const authEmail = getAdminAuthEmail(loginId);
   const response = await fetch(`${backend.url}/auth/v1/token?grant_type=password`, {
     method: "POST",
     headers: getHeaders(),
     body: JSON.stringify({
-      email,
+      email: authEmail,
       password,
     }),
   });
@@ -83,7 +100,7 @@ export async function signInAdmin(email: string, password: string) {
   const data = (await response.json()) as { access_token: string; user: { email?: string } };
   const session: AdminSession = {
     accessToken: data.access_token,
-    email: data.user.email ?? email,
+    loginId: getAdminLoginId(data.user.email ?? authEmail),
   };
 
   const isAdmin = await verifyAdminSession(session.accessToken);
