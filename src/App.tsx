@@ -1,5 +1,6 @@
 import { useEffect, useMemo, useState } from "react";
 import { Search, SlidersHorizontal, X } from "lucide-react";
+import { AdminAccess } from "./components/AdminAccess";
 import { AdminInbox } from "./components/AdminInbox";
 import { NaverMap } from "./components/NaverMap";
 import { ReportButton } from "./components/ReportButton";
@@ -238,6 +239,7 @@ function MapApp() {
       )}
 
       <ReportButton />
+      <AdminAccess />
     </main>
   );
 }

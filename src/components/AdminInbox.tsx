@@ -7,6 +7,7 @@ import {
   isReportBackendConfigured,
   signInAdmin,
   updateReportStatus,
+  verifyAdminSession,
   type AdminSession,
   type ReportMessage,
 } from "../lib/reportBackend";
@@ -36,9 +37,19 @@ export function AdminInbox() {
   };
 
   useEffect(() => {
-    if (session) {
-      void loadMessages(session);
+    if (!session) {
+      return;
     }
+
+    verifyAdminSession(session.accessToken).then((isAdmin) => {
+      if (!isAdmin) {
+        clearStoredAdminSession();
+        setSession(undefined);
+        return;
+      }
+
+      void loadMessages(session);
+    });
   }, [session]);
 
   const handleSignIn = async (event: FormEvent<HTMLFormElement>) => {
@@ -84,7 +95,7 @@ export function AdminInbox() {
           <div className="admin-title">
             <Inbox size={22} />
             <div>
-              <h1>운영자 쪽지함</h1>
+              <h1>홍어맛집제보</h1>
               <p>Supabase 연결값을 넣으면 제보글이 이곳에 쌓입니다.</p>
             </div>
           </div>
@@ -111,7 +122,7 @@ export function AdminInbox() {
             <Lock size={22} />
             <div>
               <h1>운영자 로그인</h1>
-              <p>홍어맛집 제보 쪽지함은 운영자만 확인할 수 있습니다.</p>
+              <p>홍어맛집제보 게시판은 등록된 운영자만 확인할 수 있습니다.</p>
             </div>
           </div>
           <form className="admin-login-form" onSubmit={handleSignIn}>
@@ -148,8 +159,8 @@ export function AdminInbox() {
           <div className="admin-title">
             <Inbox size={22} />
             <div>
-              <h1>운영자 쪽지함</h1>
-              <p>{session.email}</p>
+              <h1>홍어맛집제보</h1>
+              <p>{session.email} 운영자 게시판</p>
             </div>
           </div>
           <div className="admin-actions">

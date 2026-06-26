@@ -85,6 +85,13 @@ export async function signInAdmin(email: string, password: string) {
     accessToken: data.access_token,
     email: data.user.email ?? email,
   };
+
+  const isAdmin = await verifyAdminSession(session.accessToken);
+
+  if (!isAdmin) {
+    throw new Error("ADMIN_PERMISSION_REQUIRED");
+  }
+
   window.sessionStorage.setItem(sessionStorageKey, JSON.stringify(session));
   return session;
 }
@@ -123,6 +130,24 @@ export async function fetchReportMessages(accessToken: string) {
   }
 
   return (await response.json()) as ReportMessage[];
+}
+
+export async function verifyAdminSession(accessToken: string) {
+  const backend = assertReportBackend();
+  const params = new URLSearchParams({
+    limit: "1",
+    select: "user_id",
+  });
+  const response = await fetch(`${backend.url}/rest/v1/hongeo_admins?${params.toString()}`, {
+    headers: getHeaders(accessToken),
+  });
+
+  if (!response.ok) {
+    return false;
+  }
+
+  const rows = (await response.json()) as Array<{ user_id: string }>;
+  return rows.length > 0;
 }
 
 export async function updateReportStatus(accessToken: string, id: string, status: ReportMessage["status"]) {
