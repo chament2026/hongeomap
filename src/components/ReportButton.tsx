@@ -21,7 +21,7 @@ export function ReportButton() {
   const reportText = useMemo(
     () =>
       [
-        "[홍어집 제보]",
+        "[홍어맛집 제보]",
         `가게명: ${form.restaurantName || "미입력"}`,
         `주소/지역: ${form.address || "미입력"}`,
         `제보 내용: ${form.message || "미입력"}`,
@@ -47,15 +47,15 @@ export function ReportButton() {
     <>
       <button className="report-fab" onClick={() => setIsOpen(true)} type="button">
         <Send size={18} />
-        홍어집 제보하기
+        홍어맛집 제보하기
       </button>
 
       {isOpen && (
         <div className="report-overlay" role="presentation">
-          <section className="report-modal" aria-label="홍어집 제보하기">
+          <section className="report-modal" aria-label="홍어맛집 제보하기">
             <div className="report-header">
               <div>
-                <h2>홍어집 제보하기</h2>
+                <h2>홍어맛집 제보하기</h2>
                 <p>새로 가볼 만한 홍어집을 알려주세요.</p>
               </div>
               <button aria-label="제보창 닫기" onClick={() => setIsOpen(false)} type="button">
@@ -92,7 +92,7 @@ export function ReportButton() {
               </label>
 
               <button className="report-submit" type="submit">
-                제보 내용 확인
+                제보하기
               </button>
             </form>
 
