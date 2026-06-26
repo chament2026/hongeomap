@@ -1,4 +1,5 @@
 import { useEffect, useMemo, useState } from "react";
+import { Search, SlidersHorizontal, X } from "lucide-react";
 import { NaverMap } from "./components/NaverMap";
 import { ReportButton } from "./components/ReportButton";
 import { Sidebar } from "./components/Sidebar";
@@ -18,6 +19,7 @@ function App() {
   const [sortMode, setSortMode] = useState<SortMode>("default");
   const [userLocation, setUserLocation] = useState<UserLocation | undefined>();
   const [locationStatus, setLocationStatus] = useState<"idle" | "requesting" | "ready" | "error">("idle");
+  const [isMobileDrawerOpen, setIsMobileDrawerOpen] = useState(false);
 
   const filteredRestaurants = useMemo(() => {
     const query = filters.query.trim().toLowerCase();
@@ -74,6 +76,7 @@ function App() {
 
   const handleSelect = (restaurant: Restaurant) => {
     setSelectedRestaurant(restaurant);
+    setIsMobileDrawerOpen(false);
   };
 
   const requestLocationSort = () => {
@@ -157,7 +160,7 @@ function App() {
       : undefined;
 
   return (
-    <main className="app">
+    <main className={`app ${selectedRestaurant ? "has-place-detail" : ""}`}>
       <NaverMap
         focusedRegion={mapFocus}
         restaurants={visibleRestaurants}
@@ -175,11 +178,40 @@ function App() {
         selectedRestaurant={selectedRestaurant}
         selectedId={selectedRestaurant?.id}
         sortMode={sortMode}
+        mobileDrawerOpen={isMobileDrawerOpen}
         onClearSelection={() => setSelectedRestaurant(undefined)}
         onFiltersChange={setFilters}
         onSelect={handleSelect}
         onSortModeChange={handleSortModeChange}
       />
+
+      <div className="mobile-search-bar" aria-label="모바일 검색">
+        <button
+          aria-label={isMobileDrawerOpen ? "필터 닫기" : "필터 열기"}
+          onClick={() => setIsMobileDrawerOpen((current) => !current)}
+          type="button"
+        >
+          {isMobileDrawerOpen ? <X size={19} /> : <SlidersHorizontal size={19} />}
+        </button>
+        <label>
+          <Search size={18} />
+          <input
+            onChange={(event) => setFilters((current) => ({ ...current, query: event.target.value }))}
+            placeholder="식당명, 지역, 태그 검색"
+            type="search"
+            value={filters.query}
+          />
+        </label>
+      </div>
+
+      {isMobileDrawerOpen && !selectedRestaurant && (
+        <button
+          aria-label="필터 닫기"
+          className="mobile-drawer-backdrop"
+          onClick={() => setIsMobileDrawerOpen(false)}
+          type="button"
+        />
+      )}
 
       <ReportButton />
     </main>

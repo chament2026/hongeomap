@@ -263,6 +263,11 @@ button {
   backdrop-filter: blur(16px);
 }
 
+.mobile-search-bar,
+.mobile-drawer-backdrop {
+  display: none;
+}
+
 .brand {
   display: flex;
   align-items: center;
@@ -1152,20 +1157,97 @@ button {
     overflow: hidden;
   }
 
-  .sidebar {
+  .mobile-search-bar {
+    position: absolute;
     top: 12px;
     right: 12px;
-    bottom: auto;
     left: 12px;
-    width: auto;
-    max-height: 68vh;
+    z-index: 18;
+    display: grid;
+    grid-template-columns: 44px minmax(0, 1fr);
+    gap: 8px;
+  }
+
+  .mobile-search-bar button {
+    display: grid;
+    height: 44px;
+    place-items: center;
+    border: 1px solid rgba(21, 23, 26, 0.1);
+    border-radius: 8px;
+    color: #fff;
+    background: var(--red);
+    box-shadow: 0 12px 24px rgba(4, 120, 87, 0.18);
+  }
+
+  .mobile-search-bar label {
+    display: flex;
+    height: 44px;
+    align-items: center;
+    gap: 8px;
+    padding: 0 12px;
+    border: 1px solid rgba(21, 23, 26, 0.1);
+    border-radius: 8px;
+    background: rgba(255, 255, 255, 0.94);
+    box-shadow: 0 12px 28px rgba(20, 28, 35, 0.13);
+    backdrop-filter: blur(14px);
+  }
+
+  .mobile-search-bar input {
+    min-width: 0;
+    flex: 1;
+    border: 0;
+    outline: 0;
+    background: transparent;
+    color: var(--ink);
+  }
+
+  .mobile-drawer-backdrop {
+    position: fixed;
+    inset: 0;
+    z-index: 10;
+    display: block;
+    border: 0;
+    background: rgba(12, 15, 18, 0.18);
+  }
+
+  .sidebar:not(.place-sidebar) {
+    top: 68px;
+    right: auto;
+    bottom: 0;
+    left: 0;
+    z-index: 16;
+    width: min(342px, 88vw);
+    max-width: none;
+    max-height: none;
+    transform: translateX(-106%);
+    border-radius: 0 8px 0 0;
     overflow: auto;
     padding: 14px;
+    transition: transform 190ms ease;
+  }
+
+  .sidebar.is-mobile-open:not(.place-sidebar) {
+    transform: translateX(0);
+  }
+
+  .sidebar:not(.place-sidebar) .brand,
+  .sidebar:not(.place-sidebar) > .search-box {
+    display: none;
   }
 
   .place-sidebar {
-    bottom: 12px;
-    max-height: calc(100vh - 24px);
+    top: auto;
+    right: 0;
+    bottom: 0;
+    left: 0;
+    z-index: 17;
+    width: auto;
+    max-width: none;
+    max-height: 56vh;
+    min-height: 44vh;
+    overflow: auto;
+    padding: 14px 14px 18px;
+    border-radius: 14px 14px 0 0;
   }
 
   .brand {
@@ -1215,6 +1297,10 @@ button {
     bottom: 12px;
     min-height: 44px;
     padding: 0 14px;
+  }
+
+  .app.has-place-detail .report-fab {
+    display: none;
   }
 
   .map-status {

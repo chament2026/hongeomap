@@ -27,6 +27,7 @@ type SidebarProps = {
   selectedRestaurant?: Restaurant;
   selectedId?: string;
   sortMode: SortMode;
+  mobileDrawerOpen: boolean;
   onFiltersChange: (filters: Filters) => void;
   onClearSelection: () => void;
   onSelect: (restaurant: Restaurant) => void;
@@ -44,6 +45,7 @@ export function Sidebar({
   selectedRestaurant,
   selectedId,
   sortMode,
+  mobileDrawerOpen,
   onClearSelection,
   onFiltersChange,
   onSelect,
@@ -83,7 +85,7 @@ export function Sidebar({
   }
 
   return (
-    <aside className="sidebar" aria-label="홍어집 검색과 필터">
+    <aside className={`sidebar ${mobileDrawerOpen ? "is-mobile-open" : ""}`} aria-label="홍어집 검색과 필터">
       <div className="brand">
         <div>
           <h1>참피디의 홍어맵</h1>
