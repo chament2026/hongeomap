@@ -2,6 +2,12 @@ export type FermentationLevel = "beginner" | "mild" | "medium" | "strong";
 
 export type PriceRange = "low" | "mid" | "high";
 
+export type MenuItem = {
+  name: string;
+  price: string;
+  description?: string;
+};
+
 export type Restaurant = {
   id: string;
   name: string;
@@ -21,6 +27,10 @@ export type Restaurant = {
   phone: string;
   naverPlaceUrl?: string;
   simpleReview: string;
+  menuItems?: MenuItem[];
+  menuSourceLabel?: string;
+  menuSourceUrl?: string;
+  menuImageUrl?: string;
   visitedAt: string;
   summary: string;
   tags: string[];

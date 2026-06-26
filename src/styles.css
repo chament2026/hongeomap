@@ -630,12 +630,77 @@ button {
   box-shadow: 0 12px 26px rgba(3, 199, 90, 0.2);
 }
 
+.menu-section,
 .simple-review,
 .full-video {
   display: grid;
   gap: 10px;
 }
 
+.section-title-row {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 10px;
+}
+
+.section-title-row a,
+.section-title-row span {
+  color: var(--muted);
+  font-size: 12px;
+  font-weight: 800;
+  text-decoration: none;
+}
+
+.menu-list {
+  display: grid;
+  gap: 8px;
+}
+
+.menu-item {
+  display: grid;
+  grid-template-columns: minmax(0, 1fr) auto;
+  gap: 12px;
+  align-items: start;
+  padding: 13px;
+  border: 1px solid rgba(21, 23, 26, 0.08);
+  border-radius: 8px;
+  background: rgba(255, 255, 255, 0.78);
+}
+
+.menu-item div {
+  display: grid;
+  gap: 4px;
+}
+
+.menu-item strong {
+  color: #25292d;
+  font-size: 14px;
+  line-height: 1.4;
+}
+
+.menu-item span {
+  color: var(--muted);
+  font-size: 12px;
+  line-height: 1.45;
+}
+
+.menu-item em {
+  color: var(--red-strong);
+  font-style: normal;
+  font-size: 14px;
+  font-weight: 900;
+  white-space: nowrap;
+}
+
+.menu-image {
+  width: 100%;
+  border: 1px solid rgba(21, 23, 26, 0.1);
+  border-radius: 8px;
+  object-fit: cover;
+}
+
+.section-title-row h2,
 .simple-review h2,
 .full-video h2 {
   margin: 0;

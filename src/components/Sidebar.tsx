@@ -231,6 +231,35 @@ function PlaceSidebar({ restaurant, onBack }: { restaurant: Restaurant; onBack: 
         네이버플레이스에서 보기
       </a>
 
+      {restaurant.menuItems?.length ? (
+        <section className="menu-section">
+          <div className="section-title-row">
+            <h2>메뉴와 가격</h2>
+            {restaurant.menuSourceUrl ? (
+              <a href={restaurant.menuSourceUrl} rel="noreferrer" target="_blank">
+                {restaurant.menuSourceLabel ?? "출처 보기"}
+              </a>
+            ) : (
+              restaurant.menuSourceLabel && <span>{restaurant.menuSourceLabel}</span>
+            )}
+          </div>
+          <div className="menu-list">
+            {restaurant.menuItems.map((item) => (
+              <div className="menu-item" key={`${item.name}-${item.price}`}>
+                <div>
+                  <strong>{item.name}</strong>
+                  {item.description && <span>{item.description}</span>}
+                </div>
+                <em>{item.price}</em>
+              </div>
+            ))}
+          </div>
+          {restaurant.menuImageUrl && (
+            <img className="menu-image" alt={`${restaurant.name} 가격표`} src={restaurant.menuImageUrl} />
+          )}
+        </section>
+      ) : null}
+
       <section className="simple-review">
         <h2>참피디의 간단리뷰</h2>
         <p>{restaurant.simpleReview}</p>
