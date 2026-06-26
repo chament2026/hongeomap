@@ -129,9 +129,9 @@ export function AdminInbox() {
             <label>
               <span>아이디</span>
               <input
-                autoComplete="username"
+                autoComplete="off"
+                name="hongeomap-admin-page-login-id"
                 onChange={(event) => setLoginId(event.target.value)}
-                placeholder="chament2026"
                 type="text"
                 value={loginId}
               />
@@ -139,7 +139,8 @@ export function AdminInbox() {
             <label>
               <span>비밀번호</span>
               <input
-                autoComplete="current-password"
+                autoComplete="off"
+                name="hongeomap-admin-page-login-secret"
                 onChange={(event) => setPassword(event.target.value)}
                 type="password"
                 value={password}

@@ -47,12 +47,12 @@ export function AdminAccess() {
     setStatus("checking");
 
     try {
-      const nextSession = await signInAdmin(loginId, password);
-      setSession(nextSession);
+      await signInAdmin(loginId, password);
       setLoginId("");
       setPassword("");
       setIsLoginOpen(false);
       setStatus("idle");
+      window.location.assign("/admin");
     } catch {
       setStatus("error");
     }
@@ -98,9 +98,9 @@ export function AdminAccess() {
             <label>
               <span>아이디</span>
               <input
-                autoComplete="username"
+                autoComplete="off"
+                name="hongeomap-admin-login-id"
                 onChange={(event) => setLoginId(event.target.value)}
-                placeholder="chament2026"
                 required
                 type="text"
                 value={loginId}
@@ -109,7 +109,8 @@ export function AdminAccess() {
             <label>
               <span>비밀번호</span>
               <input
-                autoComplete="current-password"
+                autoComplete="off"
+                name="hongeomap-admin-login-secret"
                 onChange={(event) => setPassword(event.target.value)}
                 required
                 type="password"
