@@ -246,19 +246,6 @@ button {
   font-size: 13px;
 }
 
-.brand-mark {
-  display: grid;
-  width: 42px;
-  height: 42px;
-  place-items: center;
-  border-radius: 8px;
-  color: #fff;
-  background:
-    linear-gradient(135deg, rgba(255, 255, 255, 0.12), transparent),
-    #1f2629;
-  font-weight: 800;
-}
-
 .search-box {
   display: flex;
   align-items: center;

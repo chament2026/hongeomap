@@ -87,7 +87,6 @@ export function Sidebar({
           <h1>홍어맵</h1>
           <p>전국 홍어 맛집 전부 알려드림</p>
         </div>
-        <div className="brand-mark">ㅎ</div>
       </div>
 
       <label className="search-box">
