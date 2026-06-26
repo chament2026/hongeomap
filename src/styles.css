@@ -559,7 +559,43 @@ button {
   line-height: 1.18;
 }
 
-.place-rating {
+.score-block {
+  display: grid;
+  gap: 2px;
+  width: fit-content;
+  min-width: 138px;
+  padding: 12px 14px;
+  border: 1px solid rgba(198, 47, 49, 0.14);
+  border-radius: 8px;
+  background: rgba(198, 47, 49, 0.07);
+}
+
+.score-block > span {
+  color: var(--red-strong);
+  font-size: 12px;
+  font-weight: 900;
+}
+
+.score-block strong {
+  color: var(--red-strong);
+  font-size: 34px;
+  line-height: 1;
+}
+
+.score-block small {
+  margin-left: 5px;
+  color: var(--muted);
+  font-size: 14px;
+  font-weight: 900;
+}
+
+.score-block.is-empty strong {
+  color: var(--muted);
+  font-size: 22px;
+  line-height: 1.2;
+}
+
+.place-meta-row {
   display: flex;
   align-items: center;
   gap: 7px;
@@ -568,7 +604,7 @@ button {
   font-weight: 900;
 }
 
-.place-rating em {
+.place-meta-row em {
   min-height: 24px;
   padding: 3px 8px;
   border-radius: 999px;

@@ -213,12 +213,34 @@ function PlaceSidebar({ restaurant, onBack }: { restaurant: Restaurant; onBack: 
       <div className="place-hero">
         <span>{restaurant.region}</span>
         <h1>{restaurant.name}</h1>
-        <div className="place-rating">
-          <Store size={16} />
-          {restaurant.rating ? restaurant.rating.toFixed(1) : "리뷰"}
+        <ScoreBlock rating={restaurant.rating} />
+        <div className="place-meta-row">
           <em>{fermentationLabels[restaurant.fermentation]}</em>
         </div>
       </div>
+
+      <section className="full-video">
+        <h2>풀영상 보러가기</h2>
+        {restaurant.youtubeUrl && youtubeThumbnail ? (
+          <a href={restaurant.youtubeUrl} rel="noreferrer" target="_blank">
+            <img alt={`${restaurant.name} 유튜브 썸네일`} src={youtubeThumbnail} />
+            <span>
+              <PlayCircle size={20} />
+              유튜브에서 전체 영상 보기
+            </span>
+          </a>
+        ) : (
+          <div className="video-empty">
+            <PlayCircle size={20} />
+            풀영상 준비 중
+          </div>
+        )}
+      </section>
+
+      <section className="simple-review">
+        <h2>참피디의 한 줄평</h2>
+        <p>{restaurant.simpleReview}</p>
+      </section>
 
       <section className="place-info-list" aria-label="가게 기본 정보">
         <InfoLine icon={<MapPin size={17} />} label="주소" value={restaurant.address} />
@@ -226,15 +248,10 @@ function PlaceSidebar({ restaurant, onBack }: { restaurant: Restaurant; onBack: 
         <InfoLine icon={<Phone size={17} />} label="전화번호" value={restaurant.phone} />
       </section>
 
-      <a className="naver-place-button" href={naverPlaceUrl} rel="noreferrer" target="_blank">
-        <ExternalLink size={17} />
-        네이버플레이스에서 보기
-      </a>
-
       {restaurant.menuItems?.length ? (
         <section className="menu-section">
           <div className="section-title-row">
-            <h2>메뉴와 가격</h2>
+            <h2>메뉴</h2>
             {restaurant.menuSourceUrl ? (
               <a href={restaurant.menuSourceUrl} rel="noreferrer" target="_blank">
                 {restaurant.menuSourceLabel ?? "출처 보기"}
@@ -260,29 +277,29 @@ function PlaceSidebar({ restaurant, onBack }: { restaurant: Restaurant; onBack: 
         </section>
       ) : null}
 
-      <section className="simple-review">
-        <h2>참피디의 간단리뷰</h2>
-        <p>{restaurant.simpleReview}</p>
-      </section>
-
-      <section className="full-video">
-        <h2>풀영상 보러가기</h2>
-        {restaurant.youtubeUrl && youtubeThumbnail ? (
-          <a href={restaurant.youtubeUrl} rel="noreferrer" target="_blank">
-            <img alt={`${restaurant.name} 유튜브 썸네일`} src={youtubeThumbnail} />
-            <span>
-              <PlayCircle size={20} />
-              유튜브에서 전체 영상 보기
-            </span>
-          </a>
-        ) : (
-          <div className="video-empty">
-            <PlayCircle size={20} />
-            풀영상 준비 중
-          </div>
-        )}
-      </section>
+      <a className="naver-place-button" href={naverPlaceUrl} rel="noreferrer" target="_blank">
+        <ExternalLink size={17} />
+        네이버플레이스에서 보기
+      </a>
     </>
+  );
+}
+
+function ScoreBlock({ rating }: { rating?: number }) {
+  const hasRating = typeof rating === "number";
+
+  return (
+    <div className={`score-block ${hasRating ? "" : "is-empty"}`}>
+      <span>참피디 평점</span>
+      {hasRating ? (
+        <strong>
+          {rating.toFixed(1)}
+          <small>/ 5.0</small>
+        </strong>
+      ) : (
+        <strong>평점 준비중</strong>
+      )}
+    </div>
   );
 }
 
