@@ -1,5 +1,6 @@
 import { useEffect, useMemo, useState } from "react";
 import { NaverMap } from "./components/NaverMap";
+import { ReportButton } from "./components/ReportButton";
 import { Sidebar } from "./components/Sidebar";
 import { restaurants } from "./data/restaurants";
 import { koreaRegions } from "./data/regions";
@@ -102,6 +103,7 @@ function App() {
         onSelect={handleSelect}
       />
 
+      <ReportButton />
     </main>
   );
 }

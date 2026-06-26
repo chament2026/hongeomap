@@ -225,10 +225,6 @@ function PlaceSidebar({ restaurant, onBack }: { restaurant: Restaurant; onBack: 
         {restaurant.youtubeUrl && youtubeThumbnail ? (
           <a href={restaurant.youtubeUrl} rel="noreferrer" target="_blank">
             <img alt={`${restaurant.name} 유튜브 썸네일`} src={youtubeThumbnail} />
-            <span>
-              <PlayCircle size={20} />
-              유튜브에서 전체 영상 보기
-            </span>
           </a>
         ) : (
           <div className="video-empty">
