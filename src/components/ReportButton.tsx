@@ -5,14 +5,12 @@ type ReportForm = {
   restaurantName: string;
   address: string;
   message: string;
-  contact: string;
 };
 
 const initialForm: ReportForm = {
   restaurantName: "",
   address: "",
   message: "",
-  contact: "",
 };
 
 export function ReportButton() {
@@ -27,7 +25,6 @@ export function ReportButton() {
         `가게명: ${form.restaurantName || "미입력"}`,
         `주소/지역: ${form.address || "미입력"}`,
         `제보 내용: ${form.message || "미입력"}`,
-        `연락처: ${form.contact || "미입력"}`,
       ].join("\n"),
     [form],
   );
@@ -88,17 +85,9 @@ export function ReportButton() {
                 <span>제보 내용</span>
                 <textarea
                   onChange={(event) => updateField("message", event.target.value)}
-                  placeholder="추천 이유, 삭힘 정도, 메뉴, 가격 등을 적어주세요."
+                  placeholder="추천 이유, 메뉴, 가격 등을 적어주세요."
                   rows={4}
                   value={form.message}
-                />
-              </label>
-              <label>
-                <span>연락처</span>
-                <input
-                  onChange={(event) => updateField("contact", event.target.value)}
-                  placeholder="선택 입력"
-                  value={form.contact}
                 />
               </label>
 
@@ -110,7 +99,7 @@ export function ReportButton() {
             {isSubmitted && (
               <div className="report-result">
                 <strong>제보 내용이 준비됐습니다</strong>
-                <p>아직 관리자 쪽지함 연결 전이라, 아래 버튼으로 내용을 복사해서 전달할 수 있습니다.</p>
+                <p>아래 버튼으로 내용을 복사할 수 있습니다.</p>
                 <button onClick={copyReport} type="button">
                   제보 내용 복사
                 </button>

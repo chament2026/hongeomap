@@ -1,7 +1,5 @@
 import { useEffect, useMemo, useRef, useState } from "react";
-import { MapPin } from "lucide-react";
 import type { Restaurant } from "../types";
-import { fermentationLabels } from "../data/restaurants";
 
 type NaverMapProps = {
   focusedRegion?: {
@@ -211,6 +209,20 @@ async function findBoundaryFeature(focusedRegion: NonNullable<NaverMapProps["foc
   return provinces.features.find((feature) => feature.properties.name === boundaryName);
 }
 
+function escapeHtml(value: string) {
+  return value.replace(/[&<>"']/g, (character) => {
+    const replacements: Record<string, string> = {
+      "&": "&amp;",
+      "<": "&lt;",
+      ">": "&gt;",
+      '"': "&quot;",
+      "'": "&#39;",
+    };
+
+    return replacements[character];
+  });
+}
+
 export function NaverMap({ focusedRegion, restaurants, selectedId, onSelect }: NaverMapProps) {
   const mapElementRef = useRef<HTMLDivElement | null>(null);
   const mapRef = useRef<unknown>(null);
@@ -260,12 +272,13 @@ export function NaverMap({ focusedRegion, restaurants, selectedId, onSelect }: N
         mapRef.current = map;
         markerRefs.current.forEach((marker) => marker.setMap(null));
         markerRefs.current = restaurants.map((restaurant) => {
+          const isSelected = restaurant.id === selectedId;
           const marker = new maps.Marker({
             position: new maps.LatLng(restaurant.lat, restaurant.lng),
             map,
             icon: {
-              content: `<div class="naver-marker ${restaurant.id === selectedId ? "is-selected" : ""}">${fermentationLabels[restaurant.fermentation]}</div>`,
-              anchor: new maps.Point(34, 34),
+              content: `<div class="naver-marker ${isSelected ? "is-selected" : ""}">${isSelected ? `<span>${escapeHtml(restaurant.name)}</span>` : ""}</div>`,
+              anchor: new maps.Point(0, 0),
             },
             title: restaurant.name,
           });
@@ -393,8 +406,7 @@ function FallbackMap({
           }}
           type="button"
         >
-          <MapPin size={16} />
-          <span>{fermentationLabels[restaurant.fermentation]}</span>
+          {selectedId === restaurant.id && <span>{restaurant.name}</span>}
         </button>
       ))}
       <div className="map-status">

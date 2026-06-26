@@ -12,7 +12,7 @@ import {
   X,
 } from "lucide-react";
 import { useMemo, type ReactNode } from "react";
-import type { FermentationLevel, Filters, Restaurant } from "../types";
+import type { Filters, Restaurant } from "../types";
 import { fermentationLabels } from "../data/restaurants";
 import { koreaRegions } from "../data/regions";
 
@@ -27,7 +27,6 @@ type SidebarProps = {
   onSelect: (restaurant: Restaurant) => void;
 };
 
-const fermentationOrder: FermentationLevel[] = ["beginner", "mild", "medium", "strong"];
 const koreanNameCollator = new Intl.Collator("ko-KR");
 
 export function Sidebar({
@@ -50,12 +49,6 @@ export function Sidebar({
 
   const setQuery = (query: string) => onFiltersChange({ ...filters, query });
 
-  const toggleFermentation = (value: FermentationLevel) => {
-    const current = filters.fermentation;
-    const next = current.includes(value) ? current.filter((item) => item !== value) : [...current, value];
-    onFiltersChange({ ...filters, fermentation: next });
-  };
-
   const selectProvince = (province: string) => {
     onFiltersChange({
       ...filters,
@@ -69,7 +62,6 @@ export function Sidebar({
       query: "",
       province: undefined,
       district: undefined,
-      fermentation: [],
     });
 
   if (selectedRestaurant) {
@@ -154,17 +146,6 @@ export function Sidebar({
         </div>
       </FilterGroup>
 
-      <FilterGroup title="삭힘 정도">
-        {fermentationOrder.map((level) => (
-          <Chip
-            active={filters.fermentation.includes(level)}
-            key={level}
-            label={fermentationLabels[level]}
-            onClick={() => toggleFermentation(level)}
-          />
-        ))}
-      </FilterGroup>
-
       <div className="result-meta">
         <span>{results.length}곳 발견</span>
         <span>총 {restaurants.length}곳</span>
@@ -182,7 +163,7 @@ export function Sidebar({
             <div className="card-main">
               <strong>{restaurant.name}</strong>
               <span>{restaurant.region}</span>
-              <small>{fermentationLabels[restaurant.fermentation]}</small>
+              <small>{restaurant.summary}</small>
             </div>
             <div className="card-score">
               <Store size={15} />
@@ -318,13 +299,5 @@ function FilterGroup({ title, children }: { title: string; children: ReactNode }
       <h2>{title}</h2>
       <div className="filter-content">{children}</div>
     </section>
-  );
-}
-
-function Chip({ active, label, onClick }: { active: boolean; label: string; onClick: () => void }) {
-  return (
-    <button className={`chip ${active ? "is-active" : ""}`} onClick={onClick} type="button">
-      {label}
-    </button>
   );
 }

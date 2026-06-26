@@ -10,7 +10,6 @@ const initialFilters: Filters = {
   query: "",
   province: undefined,
   district: undefined,
-  fermentation: [],
 };
 
 function App() {
@@ -34,10 +33,8 @@ function App() {
       const matchesQuery = !query || searchable.includes(query);
       const matchesRegion = !filters.province || restaurant.province === filters.province;
       const matchesDistrict = !filters.district || restaurant.district === filters.district;
-      const matchesFermentation =
-        filters.fermentation.length === 0 || filters.fermentation.includes(restaurant.fermentation);
 
-      return matchesQuery && matchesRegion && matchesDistrict && matchesFermentation;
+      return matchesQuery && matchesRegion && matchesDistrict;
     });
   }, [filters]);
 

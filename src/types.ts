@@ -42,5 +42,4 @@ export type Filters = {
   query: string;
   province?: string;
   district?: string;
-  fermentation: FermentationLevel[];
 };
