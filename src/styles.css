@@ -329,6 +329,45 @@ button {
   background: transparent;
 }
 
+.sort-control {
+  display: grid;
+  grid-template-columns: repeat(3, minmax(0, 1fr));
+  gap: 6px;
+  margin-top: 12px;
+  padding: 5px;
+  border: 1px solid rgba(21, 23, 26, 0.08);
+  border-radius: 8px;
+  background: rgba(247, 250, 248, 0.92);
+}
+
+.sort-button {
+  display: inline-flex;
+  min-width: 0;
+  min-height: 34px;
+  align-items: center;
+  justify-content: center;
+  gap: 5px;
+  border: 0;
+  border-radius: 7px;
+  color: #3f464c;
+  background: transparent;
+  font-size: 12px;
+  font-weight: 900;
+}
+
+.sort-button.is-active {
+  color: #fff;
+  background: var(--red);
+  box-shadow: 0 8px 18px rgba(4, 120, 87, 0.16);
+}
+
+.sort-message {
+  margin: 8px 0 0;
+  color: var(--muted);
+  font-size: 12px;
+  line-height: 1.45;
+}
+
 .filter-group {
   margin-top: 14px;
 }

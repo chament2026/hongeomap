@@ -3,41 +3,51 @@ import {
   ChevronRight,
   Clock3,
   ExternalLink,
+  LocateFixed,
   MapPin,
   Phone,
   PlayCircle,
   Search,
   SlidersHorizontal,
+  Star,
   Store,
   X,
 } from "lucide-react";
 import { useMemo, type ReactNode } from "react";
-import type { Filters, Restaurant } from "../types";
+import type { Filters, Restaurant, SortMode } from "../types";
 import { fermentationLabels } from "../data/restaurants";
 import { koreaRegions } from "../data/regions";
 
 type SidebarProps = {
   filters: Filters;
+  distanceByRestaurantId: Map<string, number>;
+  locationStatus: "idle" | "requesting" | "ready" | "error";
   restaurants: Restaurant[];
   results: Restaurant[];
   selectedRestaurant?: Restaurant;
   selectedId?: string;
+  sortMode: SortMode;
   onFiltersChange: (filters: Filters) => void;
   onClearSelection: () => void;
   onSelect: (restaurant: Restaurant) => void;
+  onSortModeChange: (sortMode: SortMode) => void;
 };
 
 const koreanNameCollator = new Intl.Collator("ko-KR");
 
 export function Sidebar({
   filters,
+  distanceByRestaurantId,
+  locationStatus,
   restaurants,
   results,
   selectedRestaurant,
   selectedId,
+  sortMode,
   onClearSelection,
   onFiltersChange,
   onSelect,
+  onSortModeChange,
 }: SidebarProps) {
   const selectedProvince = filters.province
     ? koreaRegions.find((province) => province.name === filters.province)
@@ -94,13 +104,30 @@ export function Sidebar({
       <div className="filter-header">
         <span>
           <SlidersHorizontal size={16} />
-          필터
+          필터와 정렬
         </span>
         <button onClick={clearFilters} type="button">
           <X size={14} />
           초기화
         </button>
       </div>
+
+      <div className="sort-control" aria-label="홍어집 정렬">
+        <SortButton active={sortMode === "default"} icon={<Store size={14} />} label="기본순" onClick={() => onSortModeChange("default")} />
+        <SortButton
+          active={sortMode === "distance"}
+          icon={<LocateFixed size={14} />}
+          label="거리순"
+          onClick={() => onSortModeChange("distance")}
+        />
+        <SortButton active={sortMode === "rating"} icon={<Star size={14} />} label="평점순" onClick={() => onSortModeChange("rating")} />
+      </div>
+
+      {sortMode === "distance" && locationStatus !== "ready" && (
+        <p className="sort-message">
+          {locationStatus === "requesting" ? "현재 위치를 확인하고 있습니다." : "위치 권한을 허용하면 가까운 홍어집부터 볼 수 있습니다."}
+        </p>
+      )}
 
       <FilterGroup title="지역별">
         <div className="region-picker">
@@ -166,8 +193,17 @@ export function Sidebar({
               <small>{restaurant.summary}</small>
             </div>
             <div className="card-score">
-              <Store size={15} />
-              {restaurant.rating ? restaurant.rating.toFixed(1) : "보기"}
+              {sortMode === "distance" && distanceByRestaurantId.has(restaurant.id) ? (
+                <>
+                  <LocateFixed size={15} />
+                  {formatDistance(distanceByRestaurantId.get(restaurant.id)!)}
+                </>
+              ) : (
+                <>
+                  <Star size={15} />
+                  {restaurant.rating ? restaurant.rating.toFixed(1) : "보기"}
+                </>
+              )}
             </div>
           </button>
         ))}
@@ -300,4 +336,31 @@ function FilterGroup({ title, children }: { title: string; children: ReactNode }
       <div className="filter-content">{children}</div>
     </section>
   );
+}
+
+function SortButton({
+  active,
+  icon,
+  label,
+  onClick,
+}: {
+  active: boolean;
+  icon: ReactNode;
+  label: string;
+  onClick: () => void;
+}) {
+  return (
+    <button className={`sort-button ${active ? "is-active" : ""}`} onClick={onClick} type="button">
+      {icon}
+      {label}
+    </button>
+  );
+}
+
+function formatDistance(distanceKm: number) {
+  if (distanceKm < 1) {
+    return `${Math.round(distanceKm * 1000)}m`;
+  }
+
+  return `${distanceKm.toFixed(1)}km`;
 }

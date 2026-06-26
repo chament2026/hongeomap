@@ -2,6 +2,13 @@ export type FermentationLevel = "beginner" | "mild" | "medium" | "strong";
 
 export type PriceRange = "low" | "mid" | "high";
 
+export type SortMode = "default" | "distance" | "rating";
+
+export type UserLocation = {
+  lat: number;
+  lng: number;
+};
+
 export type MenuItem = {
   name: string;
   price: string;
