@@ -13,6 +13,8 @@
   --line: rgba(21, 23, 26, 0.1);
   --red: #059669;
   --red-strong: #047857;
+  --marker-red: #e11d48;
+  --marker-red-strong: #be123c;
   --mint: #0f766e;
   --gold: #4d7c0f;
   --surface: rgba(246, 248, 247, 0.86);
@@ -149,16 +151,16 @@ button {
   display: inline-flex;
   align-items: center;
   justify-content: center;
-  width: 13px;
-  height: 13px;
+  width: 10px;
+  height: 10px;
   padding: 0;
   border: 0;
   border-radius: 999px;
   color: white;
-  background: var(--red);
+  background: var(--marker-red);
   box-shadow:
-    0 0 0 4px rgba(255, 255, 255, 0.92),
-    0 10px 20px rgba(4, 120, 87, 0.24);
+    0 0 0 3px rgba(255, 255, 255, 0.92),
+    0 10px 20px rgba(190, 18, 60, 0.26);
   font-size: 12px;
   font-weight: 900;
   transition:
@@ -170,27 +172,27 @@ button {
 .fallback-pin.is-selected {
   width: auto;
   min-width: 0;
-  height: 30px;
-  padding: 0 10px;
-  background: var(--red);
-  transform: translate(-12px, -10px);
+  height: 26px;
+  padding: 0 8px;
+  background: var(--marker-red-strong);
+  transform: translate(-10px, -9px);
   box-shadow:
-    0 0 0 5px rgba(255, 255, 255, 0.96),
-    0 14px 28px rgba(4, 120, 87, 0.32);
+    0 0 0 4px rgba(255, 255, 255, 0.96),
+    0 14px 28px rgba(190, 18, 60, 0.34);
 }
 
 .naver-marker {
   display: inline-grid;
-  width: 13px;
-  height: 13px;
+  width: 10px;
+  height: 10px;
   place-items: center;
   border: 0;
   border-radius: 999px;
   color: #fff;
-  background: var(--red);
+  background: var(--marker-red);
   box-shadow:
-    0 0 0 4px rgba(255, 255, 255, 0.94),
-    0 10px 22px rgba(4, 120, 87, 0.28);
+    0 0 0 3px rgba(255, 255, 255, 0.94),
+    0 10px 22px rgba(190, 18, 60, 0.3);
   font-size: 12px;
   font-weight: 900;
   line-height: 1;
@@ -206,12 +208,12 @@ button {
 .naver-marker.is-selected {
   width: auto;
   min-width: 0;
-  height: 30px;
-  padding: 0 10px;
-  background: var(--red);
+  height: 26px;
+  padding: 0 8px;
+  background: var(--marker-red-strong);
   box-shadow:
-    0 0 0 5px rgba(255, 255, 255, 0.96),
-    0 14px 28px rgba(4, 120, 87, 0.32);
+    0 0 0 4px rgba(255, 255, 255, 0.96),
+    0 14px 28px rgba(190, 18, 60, 0.34);
   transform: translate(-50%, -50%) scale(1.02);
 }
 
