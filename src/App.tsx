@@ -11,8 +11,6 @@ const initialFilters: Filters = {
   province: undefined,
   district: undefined,
   fermentation: [],
-  maxPrice: 1000000,
-  openNow: false,
 };
 
 function App() {
@@ -38,10 +36,8 @@ function App() {
       const matchesDistrict = !filters.district || restaurant.district === filters.district;
       const matchesFermentation =
         filters.fermentation.length === 0 || filters.fermentation.includes(restaurant.fermentation);
-      const matchesPrice = restaurant.averagePrice <= filters.maxPrice;
-      const matchesOpen = !filters.openNow || restaurant.isOpenNow;
 
-      return matchesQuery && matchesRegion && matchesDistrict && matchesFermentation && matchesPrice && matchesOpen;
+      return matchesQuery && matchesRegion && matchesDistrict && matchesFermentation;
     });
   }, [filters]);
 
@@ -119,20 +115,6 @@ function App() {
           <ListFilter size={18} />
         </button>
       </div>
-
-      <section className="recent-panel" aria-label="최근 업데이트">
-        <div>
-          <strong>이번 달 홍어집</strong>
-          <span>영상 업로드 후 리뷰가 연결됩니다</span>
-        </div>
-        {restaurants.slice(0, 4).map((restaurant, index) => (
-          <button key={restaurant.id} onClick={() => handleSelect(restaurant)} type="button">
-            <span>#{index + 1}</span>
-            <strong>{restaurant.name}</strong>
-            <small>{restaurant.visitedAt}</small>
-          </button>
-        ))}
-      </section>
     </main>
   );
 }

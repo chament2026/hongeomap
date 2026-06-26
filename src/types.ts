@@ -12,11 +12,11 @@ export type Restaurant = {
   lat: number;
   lng: number;
   fermentation: FermentationLevel;
-  priceRange: PriceRange;
-  averagePrice: number;
-  rating: number;
-  isOpenNow: boolean;
-  hasVideo: boolean;
+  priceRange?: PriceRange;
+  averagePrice?: number;
+  rating?: number;
+  isOpenNow?: boolean;
+  hasVideo?: boolean;
   hours: string;
   phone: string;
   naverPlaceUrl?: string;
@@ -33,6 +33,4 @@ export type Filters = {
   province?: string;
   district?: string;
   fermentation: FermentationLevel[];
-  maxPrice: number;
-  openNow: boolean;
 };

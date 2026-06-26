@@ -28,7 +28,6 @@ type SidebarProps = {
 };
 
 const fermentationOrder: FermentationLevel[] = ["beginner", "mild", "medium", "strong"];
-const maxPriceLimit = 1000000;
 
 export function Sidebar({
   filters,
@@ -67,8 +66,6 @@ export function Sidebar({
       province: undefined,
       district: undefined,
       fermentation: [],
-      maxPrice: maxPriceLimit,
-      openNow: false,
     });
 
   if (selectedRestaurant) {
@@ -84,7 +81,7 @@ export function Sidebar({
       <div className="brand">
         <div>
           <h1>홍어맵</h1>
-          <p>다녀온 홍어집 지도</p>
+          <p>전국 홍어 맛집 전부 알려드림</p>
         </div>
         <div className="brand-mark">ㅎ</div>
       </div>
@@ -165,28 +162,6 @@ export function Sidebar({
         ))}
       </FilterGroup>
 
-      <FilterGroup title="가격대">
-        <div className="price-slider">
-          <div>
-            <span>최대 예산</span>
-            <strong>{formatPrice(filters.maxPrice)}</strong>
-          </div>
-          <input
-            aria-label="최대 가격"
-            max={maxPriceLimit}
-            min={10000}
-            onChange={(event) => onFiltersChange({ ...filters, maxPrice: Number(event.target.value) })}
-            step={10000}
-            type="range"
-            value={filters.maxPrice}
-          />
-          <div className="price-scale">
-            <span>1만원</span>
-            <span>100만원</span>
-          </div>
-        </div>
-      </FilterGroup>
-
       <div className="result-meta">
         <span>{results.length}곳 발견</span>
         <span>총 {restaurants.length}곳</span>
@@ -204,13 +179,11 @@ export function Sidebar({
             <div className="card-main">
               <strong>{restaurant.name}</strong>
               <span>{restaurant.region}</span>
-              <small>
-                {fermentationLabels[restaurant.fermentation]} · {restaurant.averagePrice.toLocaleString()}원대
-              </small>
+              <small>{fermentationLabels[restaurant.fermentation]}</small>
             </div>
             <div className="card-score">
               <Store size={15} />
-              {restaurant.rating.toFixed(1)}
+              {restaurant.rating ? restaurant.rating.toFixed(1) : "보기"}
             </div>
           </button>
         ))}
@@ -238,7 +211,7 @@ function PlaceSidebar({ restaurant, onBack }: { restaurant: Restaurant; onBack: 
         <h1>{restaurant.name}</h1>
         <div className="place-rating">
           <Store size={16} />
-          {restaurant.rating.toFixed(1)}
+          {restaurant.rating ? restaurant.rating.toFixed(1) : "리뷰"}
           <em>{fermentationLabels[restaurant.fermentation]}</em>
         </div>
       </div>
@@ -290,14 +263,6 @@ function InfoLine({ icon, label, value }: { icon: ReactNode; label: string; valu
       </div>
     </div>
   );
-}
-
-function formatPrice(price: number) {
-  if (price >= 10000) {
-    return `${Math.round(price / 10000).toLocaleString()}만원`;
-  }
-
-  return `${price.toLocaleString()}원`;
 }
 
 function FilterGroup({ title, children }: { title: string; children: ReactNode }) {
