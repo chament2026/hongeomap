@@ -1,5 +1,4 @@
 import { useEffect, useMemo, useState } from "react";
-import { Heart, ListFilter, Map } from "lucide-react";
 import { NaverMap } from "./components/NaverMap";
 import { Sidebar } from "./components/Sidebar";
 import { restaurants } from "./data/restaurants";
@@ -103,18 +102,6 @@ function App() {
         onSelect={handleSelect}
       />
 
-      <div className="top-controls" aria-label="지도 빠른 조작">
-        <button type="button">
-          <Map size={17} />
-          이 지역 더 보기
-        </button>
-        <button aria-label="찜한 홍어집" type="button">
-          <Heart size={18} />
-        </button>
-        <button aria-label="필터 열기" type="button">
-          <ListFilter size={18} />
-        </button>
-      </div>
     </main>
   );
 }

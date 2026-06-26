@@ -212,9 +212,11 @@ function PlaceSidebar({ restaurant, onBack }: { restaurant: Restaurant; onBack: 
       <div className="place-hero">
         <span>{restaurant.region}</span>
         <h1>{restaurant.name}</h1>
-        <ScoreBlock rating={restaurant.rating} />
-        <div className="place-meta-row">
-          <em>{fermentationLabels[restaurant.fermentation]}</em>
+        <div className="score-meta-row">
+          <ScoreBlock rating={restaurant.rating} />
+          <div className="place-meta-row">
+            <em>{fermentationLabels[restaurant.fermentation]}</em>
+          </div>
         </div>
       </div>
 
