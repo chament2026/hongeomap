@@ -11,7 +11,7 @@ import {
   Store,
   X,
 } from "lucide-react";
-import type { ReactNode } from "react";
+import { useMemo, type ReactNode } from "react";
 import type { FermentationLevel, Filters, Restaurant } from "../types";
 import { fermentationLabels } from "../data/restaurants";
 import { koreaRegions } from "../data/regions";
@@ -28,6 +28,7 @@ type SidebarProps = {
 };
 
 const fermentationOrder: FermentationLevel[] = ["beginner", "mild", "medium", "strong"];
+const koreanNameCollator = new Intl.Collator("ko-KR");
 
 export function Sidebar({
   filters,
@@ -42,7 +43,10 @@ export function Sidebar({
   const selectedProvince = filters.province
     ? koreaRegions.find((province) => province.name === filters.province)
     : undefined;
-  const selectedDistricts = selectedProvince?.districts ?? [];
+  const selectedDistricts = useMemo(
+    () => [...(selectedProvince?.districts ?? [])].sort((a, b) => koreanNameCollator.compare(a.name, b.name)),
+    [selectedProvince],
+  );
 
   const setQuery = (query: string) => onFiltersChange({ ...filters, query });
 
