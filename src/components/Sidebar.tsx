@@ -258,6 +258,11 @@ function PlaceSidebar({ restaurant, onBack }: { restaurant: Restaurant; onBack: 
         <InfoLine icon={<Phone size={17} />} label="전화번호" value={restaurant.phone} />
       </section>
 
+      <a className="naver-place-button" href={naverPlaceUrl} rel="noreferrer" target="_blank">
+        <ExternalLink size={17} />
+        네이버플레이스에서 보기
+      </a>
+
       {restaurant.menuItems?.length ? (
         <section className="menu-section">
           <div className="section-title-row">
@@ -286,11 +291,6 @@ function PlaceSidebar({ restaurant, onBack }: { restaurant: Restaurant; onBack: 
           )}
         </section>
       ) : null}
-
-      <a className="naver-place-button" href={naverPlaceUrl} rel="noreferrer" target="_blank">
-        <ExternalLink size={17} />
-        네이버플레이스에서 보기
-      </a>
     </>
   );
 }
