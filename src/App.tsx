@@ -86,6 +86,7 @@ function App() {
         focusedRegion={mapFocus}
         restaurants={filteredRestaurants}
         selectedId={selectedRestaurant?.id}
+        onClearSelection={() => setSelectedRestaurant(undefined)}
         onSelect={handleSelect}
       />
 

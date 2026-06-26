@@ -13,6 +13,7 @@ type NaverMapProps = {
   };
   restaurants: Restaurant[];
   selectedId?: string;
+  onClearSelection: () => void;
   onSelect: (restaurant: Restaurant) => void;
 };
 
@@ -179,10 +180,10 @@ function createBoundaryPolygons(maps: NaverMaps, map: unknown, feature: GeoFeatu
       new maps.Polygon({
         map,
         paths,
-        strokeColor: "#c62f31",
+        strokeColor: "#059669",
         strokeOpacity: 0.95,
         strokeWeight: 4,
-        fillColor: "#c62f31",
+        fillColor: "#059669",
         fillOpacity: 0.08,
         clickable: false,
         zIndex: 90,
@@ -223,12 +224,17 @@ function escapeHtml(value: string) {
   });
 }
 
-export function NaverMap({ focusedRegion, restaurants, selectedId, onSelect }: NaverMapProps) {
+export function NaverMap({ focusedRegion, restaurants, selectedId, onClearSelection, onSelect }: NaverMapProps) {
   const mapElementRef = useRef<HTMLDivElement | null>(null);
   const mapRef = useRef<unknown>(null);
+  const hasMapClickListenerRef = useRef(false);
+  const ignoreNextMapClickRef = useRef(false);
   const markerRefs = useRef<Array<{ setMap: (map: unknown | null) => void }>>([]);
   const boundaryRefs = useRef<Array<{ setMap: (map: unknown | null) => void }>>([]);
   const [loadState, setLoadState] = useState<"loading" | "ready" | "fallback">("loading");
+  const onClearSelectionRef = useRef(onClearSelection);
+
+  onClearSelectionRef.current = onClearSelection;
 
   const center = useMemo(() => {
     if (restaurants.length === 0) {
@@ -270,6 +276,18 @@ export function NaverMap({ focusedRegion, restaurants, selectedId, onSelect }: N
           });
 
         mapRef.current = map;
+        if (!hasMapClickListenerRef.current) {
+          maps.Event.addListener(map, "click", () => {
+            if (ignoreNextMapClickRef.current) {
+              ignoreNextMapClickRef.current = false;
+              return;
+            }
+
+            onClearSelectionRef.current();
+          });
+          hasMapClickListenerRef.current = true;
+        }
+
         markerRefs.current.forEach((marker) => marker.setMap(null));
         markerRefs.current = restaurants.map((restaurant) => {
           const isSelected = restaurant.id === selectedId;
@@ -282,7 +300,13 @@ export function NaverMap({ focusedRegion, restaurants, selectedId, onSelect }: N
             },
             title: restaurant.name,
           });
-          maps.Event.addListener(marker, "click", () => onSelect(restaurant));
+          maps.Event.addListener(marker, "click", () => {
+            ignoreNextMapClickRef.current = true;
+            onSelect(restaurant);
+            window.setTimeout(() => {
+              ignoreNextMapClickRef.current = false;
+            }, 0);
+          });
           return marker;
         });
 
@@ -374,7 +398,13 @@ export function NaverMap({ focusedRegion, restaurants, selectedId, onSelect }: N
     <section className="map-shell" aria-label="홍어맵 지도">
       <div ref={mapElementRef} className="naver-map" style={{ height: "100%", width: "100%" }} />
       {loadState !== "ready" && (
-        <FallbackMap restaurants={restaurants} selectedId={selectedId} onSelect={onSelect} loading={loadState === "loading"} />
+        <FallbackMap
+          restaurants={restaurants}
+          selectedId={selectedId}
+          onClearSelection={onClearSelection}
+          onSelect={onSelect}
+          loading={loadState === "loading"}
+        />
       )}
     </section>
   );
@@ -383,11 +413,19 @@ export function NaverMap({ focusedRegion, restaurants, selectedId, onSelect }: N
 function FallbackMap({
   restaurants,
   selectedId,
+  onClearSelection,
   onSelect,
   loading,
 }: NaverMapProps & { loading: boolean }) {
   return (
-    <div className="fallback-map">
+    <div
+      className="fallback-map"
+      onClick={(event) => {
+        if (!(event.target as HTMLElement).closest("button")) {
+          onClearSelection();
+        }
+      }}
+    >
       <div className="fallback-river" />
       <div className="fallback-road road-a" />
       <div className="fallback-road road-b" />
@@ -399,7 +437,10 @@ function FallbackMap({
         <button
           className={`fallback-pin ${selectedId === restaurant.id ? "is-selected" : ""}`}
           key={restaurant.id}
-          onClick={() => onSelect(restaurant)}
+          onClick={(event) => {
+            event.stopPropagation();
+            onSelect(restaurant);
+          }}
           style={{
             left: `${22 + ((index * 17) % 56)}%`,
             top: `${24 + ((index * 23) % 48)}%`,

@@ -76,7 +76,7 @@ export function Sidebar({
     <aside className="sidebar" aria-label="홍어집 검색과 필터">
       <div className="brand">
         <div>
-          <h1>홍어맵</h1>
+          <h1>참피디의 홍어맵</h1>
           <p>전국 홍어 맛집 전부 알려드림</p>
         </div>
       </div>

@@ -1,6 +1,6 @@
 :root {
   color: #15171a;
-  background: #eef2f3;
+  background: #eef7f2;
   font-family:
     Inter, ui-sans-serif, system-ui, -apple-system, BlinkMacSystemFont, "Segoe UI", sans-serif;
   font-synthesis: none;
@@ -11,10 +11,10 @@
   --ink: #15171a;
   --muted: #697179;
   --line: rgba(21, 23, 26, 0.1);
-  --red: #c62f31;
-  --red-strong: #8d191b;
-  --mint: #087f75;
-  --gold: #bf8429;
+  --red: #059669;
+  --red-strong: #047857;
+  --mint: #0f766e;
+  --gold: #4d7c0f;
   --surface: rgba(246, 248, 247, 0.86);
   --shadow: 0 24px 70px rgba(20, 28, 35, 0.18);
 }
@@ -47,7 +47,7 @@ button {
   min-width: 320px;
   height: 100vh;
   overflow: hidden;
-  background: #dfe7e7;
+  background: #e4f1eb;
 }
 
 .map-shell,
@@ -69,10 +69,10 @@ button {
   overflow: hidden;
   background:
     radial-gradient(circle at 72% 28%, rgba(8, 127, 117, 0.12), transparent 28%),
-    radial-gradient(circle at 24% 78%, rgba(198, 47, 49, 0.08), transparent 26%),
+    radial-gradient(circle at 24% 78%, rgba(5, 150, 105, 0.1), transparent 26%),
     linear-gradient(90deg, rgba(255, 255, 255, 0.54) 1px, transparent 1px),
     linear-gradient(0deg, rgba(255, 255, 255, 0.58) 1px, transparent 1px),
-    #dce6e5;
+    #e2f0ea;
   background-size: auto, auto, 74px 74px, 74px 74px, auto;
 }
 
@@ -149,8 +149,8 @@ button {
   display: inline-flex;
   align-items: center;
   justify-content: center;
-  width: 20px;
-  height: 20px;
+  width: 13px;
+  height: 13px;
   padding: 0;
   border: 0;
   border-radius: 999px;
@@ -158,8 +158,8 @@ button {
   background: var(--red);
   box-shadow:
     0 0 0 4px rgba(255, 255, 255, 0.92),
-    0 12px 24px rgba(141, 25, 27, 0.28);
-  font-size: 13px;
+    0 10px 20px rgba(4, 120, 87, 0.24);
+  font-size: 12px;
   font-weight: 900;
   transition:
     min-width 160ms ease,
@@ -169,20 +169,20 @@ button {
 
 .fallback-pin.is-selected {
   width: auto;
-  min-width: 118px;
-  height: 38px;
-  padding: 0 14px;
+  min-width: 0;
+  height: 30px;
+  padding: 0 10px;
   background: var(--red);
   transform: translate(-12px, -10px);
   box-shadow:
     0 0 0 5px rgba(255, 255, 255, 0.96),
-    0 18px 34px rgba(141, 25, 27, 0.34);
+    0 14px 28px rgba(4, 120, 87, 0.32);
 }
 
 .naver-marker {
   display: inline-grid;
-  width: 20px;
-  height: 20px;
+  width: 13px;
+  height: 13px;
   place-items: center;
   border: 0;
   border-radius: 999px;
@@ -190,8 +190,8 @@ button {
   background: var(--red);
   box-shadow:
     0 0 0 4px rgba(255, 255, 255, 0.94),
-    0 12px 26px rgba(141, 25, 27, 0.3);
-  font-size: 13px;
+    0 10px 22px rgba(4, 120, 87, 0.28);
+  font-size: 12px;
   font-weight: 900;
   line-height: 1;
   transform: translate(-50%, -50%);
@@ -205,19 +205,19 @@ button {
 
 .naver-marker.is-selected {
   width: auto;
-  min-width: 118px;
-  height: 38px;
-  padding: 0 14px;
+  min-width: 0;
+  height: 30px;
+  padding: 0 10px;
   background: var(--red);
   box-shadow:
     0 0 0 5px rgba(255, 255, 255, 0.96),
-    0 18px 34px rgba(141, 25, 27, 0.34);
-  transform: translate(-50%, -50%) scale(1.04);
+    0 14px 28px rgba(4, 120, 87, 0.32);
+  transform: translate(-50%, -50%) scale(1.02);
 }
 
 .naver-marker span {
   overflow: hidden;
-  max-width: 180px;
+  max-width: 150px;
   text-overflow: ellipsis;
   white-space: nowrap;
 }
@@ -574,9 +574,9 @@ button {
   width: fit-content;
   min-width: 138px;
   padding: 12px 14px;
-  border: 1px solid rgba(198, 47, 49, 0.14);
+  border: 1px solid rgba(5, 150, 105, 0.14);
   border-radius: 8px;
-  background: rgba(198, 47, 49, 0.07);
+  background: rgba(5, 150, 105, 0.07);
 }
 
 .score-block > span {
@@ -625,7 +625,7 @@ button {
   padding: 3px 8px;
   border-radius: 999px;
   color: var(--red-strong);
-  background: rgba(198, 47, 49, 0.08);
+  background: rgba(5, 150, 105, 0.08);
   font-style: normal;
   font-size: 12px;
 }
@@ -812,7 +812,7 @@ button {
   place-items: center;
   border-radius: 999px;
   color: #fff;
-  background: rgba(198, 47, 49, 0.88);
+  background: rgba(5, 150, 105, 0.88);
   content: "";
   opacity: 0;
   transform: translate(-50%, -50%) scale(0.92);
@@ -841,8 +841,8 @@ button {
 
 .full-video a:hover,
 .full-video a:focus-visible {
-  border-color: rgba(198, 47, 49, 0.36);
-  box-shadow: 0 14px 30px rgba(141, 25, 27, 0.16);
+  border-color: rgba(5, 150, 105, 0.36);
+  box-shadow: 0 14px 30px rgba(4, 120, 87, 0.16);
   transform: translateY(-1px);
 }
 
@@ -886,7 +886,7 @@ button {
   border-radius: 999px;
   color: #fff;
   background: var(--red);
-  box-shadow: 0 16px 36px rgba(141, 25, 27, 0.28);
+  box-shadow: 0 16px 36px rgba(4, 120, 87, 0.28);
   font-size: 14px;
   font-weight: 900;
 }
@@ -998,9 +998,9 @@ button {
   display: grid;
   gap: 8px;
   padding: 13px;
-  border: 1px solid rgba(198, 47, 49, 0.18);
+  border: 1px solid rgba(5, 150, 105, 0.18);
   border-radius: 8px;
-  background: rgba(198, 47, 49, 0.07);
+  background: rgba(5, 150, 105, 0.07);
 }
 
 .report-result strong {
