@@ -112,18 +112,12 @@ export function AdminInbox() {
       <main className="admin-page">
         <section className="admin-panel">
           <div className="admin-title">
-            <Inbox size={22} />
             <div>
-              <h1>홍어맛집제보</h1>
-              <p>Supabase 연결값을 넣으면 제보글이 이곳에 쌓입니다.</p>
+              <h1>홍어맵</h1>
             </div>
           </div>
           <div className="admin-empty">
-            <strong>쪽지함 연결 준비가 필요합니다</strong>
-            <p>
-              Vercel 환경변수에 <code>VITE_SUPABASE_URL</code>, <code>VITE_SUPABASE_ANON_KEY</code>를 추가하면
-              로그인과 제보 저장이 활성화됩니다.
-            </p>
+            <strong>준비 중입니다</strong>
           </div>
           <a className="admin-home-link" href="/">
             홍어맵으로 돌아가기
@@ -138,10 +132,8 @@ export function AdminInbox() {
       <main className="admin-page">
         <section className="admin-login">
           <div className="admin-title">
-            <Lock size={22} />
             <div>
-              <h1>운영자 로그인</h1>
-              <p>홍어맛집제보 게시판은 등록된 운영자만 확인할 수 있습니다.</p>
+              <h1>홍어맵</h1>
             </div>
           </div>
           <form className="admin-login-form" onSubmit={handleSignIn}>

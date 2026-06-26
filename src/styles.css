@@ -1382,6 +1382,11 @@ button {
   text-decoration: none;
 }
 
+.admin-login-button {
+  width: 42px;
+  padding: 0;
+}
+
 .admin-report-link {
   color: #fff;
   border-color: transparent;

@@ -1,5 +1,5 @@
 import { FormEvent, useEffect, useState } from "react";
-import { Lock, LogOut, MessageSquareText, X } from "lucide-react";
+import { Lock, X } from "lucide-react";
 import {
   clearStoredAdminSession,
   getStoredAdminSession,
@@ -66,29 +66,20 @@ export function AdminAccess() {
   return (
     <div className="admin-access">
       {session ? (
-        <>
-          <a className="admin-report-link" href="/admin">
-            <MessageSquareText size={16} />
-            홍어맛집제보
-          </a>
-          <button className="admin-logout-button" onClick={handleSignOut} type="button">
-            <LogOut size={15} />
-            로그아웃
-          </button>
-        </>
+        <button aria-label="잠금" className="admin-login-button" onClick={handleSignOut} type="button">
+          <Lock size={16} />
+        </button>
       ) : (
-        <button className="admin-login-button" onClick={handleOpenLogin} type="button">
-          <Lock size={15} />
-          운영자 로그인
+        <button aria-label="잠금" className="admin-login-button" onClick={handleOpenLogin} type="button">
+          <Lock size={16} />
         </button>
       )}
 
       {isLoginOpen && (
-        <div className="admin-login-popover" role="dialog" aria-label="운영자 로그인">
+        <div className="admin-login-popover" role="dialog" aria-label="로그인">
           <div className="admin-login-popover-head">
             <div>
-              <strong>운영자 로그인</strong>
-              <span>등록된 어드민 계정만 접속할 수 있습니다.</span>
+              <strong>홍어맵</strong>
             </div>
             <button aria-label="로그인 닫기" onClick={() => setIsLoginOpen(false)} type="button">
               <X size={16} />
@@ -122,9 +113,9 @@ export function AdminAccess() {
             </button>
           </form>
           {status === "not-configured" && (
-            <p className="admin-login-note">Supabase 연결 후 운영자 로그인이 활성화됩니다.</p>
+            <p className="admin-login-note">잠시 후 다시 시도해주세요.</p>
           )}
-          {status === "error" && <p className="admin-login-note is-error">운영자 계정 정보를 확인해주세요.</p>}
+          {status === "error" && <p className="admin-login-note is-error">로그인 정보를 확인해주세요.</p>}
         </div>
       )}
     </div>
