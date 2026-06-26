@@ -18,8 +18,11 @@ export type ReportMessage = {
   created_at: string;
 };
 
-const supabaseUrl = import.meta.env.VITE_SUPABASE_URL as string | undefined;
-const supabaseAnonKey = import.meta.env.VITE_SUPABASE_ANON_KEY as string | undefined;
+const defaultSupabaseUrl = "https://lqlccyghzxhrbvyzpqkr.supabase.co";
+const defaultSupabaseAnonKey = "sb_publishable_9ncEs05_DBWkoncijqYT6Q_sfF0AzV8";
+
+const supabaseUrl = (import.meta.env.VITE_SUPABASE_URL as string | undefined) ?? defaultSupabaseUrl;
+const supabaseAnonKey = (import.meta.env.VITE_SUPABASE_ANON_KEY as string | undefined) ?? defaultSupabaseAnonKey;
 const adminAuthDomain = (import.meta.env.VITE_ADMIN_AUTH_DOMAIN as string | undefined) ?? "hongeomap.local";
 const sessionStorageKey = "hongeomap:admin-session";
 

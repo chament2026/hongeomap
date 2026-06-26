@@ -58,17 +58,12 @@ export function AdminAccess() {
     }
   };
 
-  const handleSignOut = () => {
-    clearStoredAdminSession();
-    setSession(undefined);
-  };
-
   return (
     <div className="admin-access">
       {session ? (
-        <button aria-label="잠금" className="admin-login-button" onClick={handleSignOut} type="button">
+        <a aria-label="잠금" className="admin-login-button" href="/admin">
           <Lock size={16} />
-        </button>
+        </a>
       ) : (
         <button aria-label="잠금" className="admin-login-button" onClick={handleOpenLogin} type="button">
           <Lock size={16} />
