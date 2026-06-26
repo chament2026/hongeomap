@@ -15,7 +15,6 @@ import {
 } from "lucide-react";
 import { useMemo, type ReactNode } from "react";
 import type { Filters, Restaurant, SortMode } from "../types";
-import { fermentationLabels } from "../data/restaurants";
 import { koreaRegions } from "../data/regions";
 
 type SidebarProps = {
@@ -233,9 +232,6 @@ function PlaceSidebar({ restaurant, onBack }: { restaurant: Restaurant; onBack: 
         <h1>{restaurant.name}</h1>
         <div className="score-meta-row">
           <ScoreBlock rating={restaurant.rating} />
-          <div className="place-meta-row">
-            <em>{fermentationLabels[restaurant.fermentation]}</em>
-          </div>
         </div>
       </div>
 
