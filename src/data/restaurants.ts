@@ -156,7 +156,9 @@ export const restaurants: Restaurant[] = [
     visitedAt: "방문일 확인 필요",
     summary: "서울 마포 도화동의 정겨운 홍어 노포.",
     rating: 4.1,
-    tags: ["서울", "마포구", "도화동", "나루터", "노포"],
+    tags: ["서울", "마포구", "도화동", "나루터", "노포", "영상리뷰"],
+    youtubeId: "QAaC9DT5NXY",
+    youtubeUrl: "https://www.youtube.com/watch?v=QAaC9DT5NXY",
   },
   {
     id: "hongeo-hanmari-seogyo",
