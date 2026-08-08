@@ -1,0 +1,92 @@
+name: Supabase Keepalive
+
+on:
+  schedule:
+    # Runs twice a day in UTC to keep the free Supabase project active.
+    - cron: "17 0,12 * * *"
+  workflow_dispatch:
+
+jobs:
+  keepalive:
+    name: Keep hongeomap Supabase awake
+    runs-on: ubuntu-latest
+    timeout-minutes: 10
+
+    env:
+      SUPABASE_PROJECT_REF: lqlccyghzxhrbvyzpqkr
+      SUPABASE_URL: https://lqlccyghzxhrbvyzpqkr.supabase.co
+      SUPABASE_ANON_KEY: sb_publishable_9ncEs05_DBWkoncijqYT6Q_sfF0AzV8
+      SUPABASE_ACCESS_TOKEN: ${{ secrets.SUPABASE_ACCESS_TOKEN }}
+
+    steps:
+      - name: Check project health
+        id: health
+        shell: bash
+        run: |
+          set +e
+          code="$(curl -sS --max-time 10 -o /tmp/supabase-health.txt -w "%{http_code}" \
+            -H "apikey: ${SUPABASE_ANON_KEY}" \
+            "${SUPABASE_URL}/auth/v1/health")"
+          curl_status=$?
+          set -e
+
+          echo "status_code=${code}" >> "$GITHUB_OUTPUT"
+          echo "curl_status=${curl_status}" >> "$GITHUB_OUTPUT"
+
+          if [ "$curl_status" -eq 0 ]; then
+            cat /tmp/supabase-health.txt
+          fi
+
+      - name: Restore paused project
+        if: steps.health.outputs.status_code != '200' && env.SUPABASE_ACCESS_TOKEN != ''
+        shell: bash
+        run: |
+          set -euo pipefail
+          echo "Supabase health check returned ${STATUS_CODE}. Requesting project restore..."
+          curl -sS --fail-with-body -X POST \
+            "https://api.supabase.com/v1/projects/${SUPABASE_PROJECT_REF}/restore" \
+            -H "Authorization: Bearer ${SUPABASE_ACCESS_TOKEN}" \
+            -H "Content-Type: application/json" \
+            -d '{}'
+        env:
+          STATUS_CODE: ${{ steps.health.outputs.status_code }}
+
+      - name: Explain missing restore token
+        if: steps.health.outputs.status_code != '200' && env.SUPABASE_ACCESS_TOKEN == ''
+        shell: bash
+        run: |
+          echo "Supabase is not healthy, but SUPABASE_ACCESS_TOKEN is not set."
+          echo "The keepalive request can prevent pausing while the project is active."
+          echo "To restore an already-paused project automatically, add a Supabase Personal Access Token as the GitHub secret SUPABASE_ACCESS_TOKEN."
+          exit 1
+
+      - name: Wait until project responds
+        shell: bash
+        run: |
+          set -euo pipefail
+
+          for attempt in {1..30}; do
+            code="$(curl -sS --max-time 10 -o /tmp/supabase-health.txt -w "%{http_code}" \
+              -H "apikey: ${SUPABASE_ANON_KEY}" \
+              "${SUPABASE_URL}/auth/v1/health" || true)"
+            echo "Attempt ${attempt}: HTTP ${code}"
+
+            if [ "$code" = "200" ]; then
+              cat /tmp/supabase-health.txt
+              exit 0
+            fi
+
+            sleep 10
+          done
+
+          echo "Supabase project did not become ready in time."
+          exit 1
+
+      - name: Send keepalive request
+        shell: bash
+        run: |
+          set -euo pipefail
+          curl -sS --fail-with-body \
+            -H "apikey: ${SUPABASE_ANON_KEY}" \
+            "${SUPABASE_URL}/auth/v1/health"
+          echo
