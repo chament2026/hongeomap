@@ -1008,6 +1008,46 @@ button {
   transform: translateX(-50%);
 }
 
+.visitor-counter {
+  position: absolute;
+  right: 18px;
+  bottom: 18px;
+  z-index: 7;
+  display: inline-flex;
+  align-items: center;
+  gap: 10px;
+  min-height: 42px;
+  padding: 0 14px;
+  border: 1px solid rgba(21, 23, 26, 0.1);
+  border-radius: 999px;
+  color: #1f2925;
+  background: rgba(255, 255, 255, 0.94);
+  box-shadow: 0 16px 36px rgba(20, 28, 35, 0.16);
+  backdrop-filter: blur(14px);
+  font-size: 13px;
+  font-weight: 850;
+}
+
+.visitor-counter svg {
+  color: var(--red);
+}
+
+.visitor-counter span {
+  display: inline-flex;
+  align-items: baseline;
+  gap: 4px;
+  white-space: nowrap;
+}
+
+.visitor-counter strong {
+  color: var(--red-strong);
+  font-size: 15px;
+}
+
+.visitor-counter.is-error {
+  color: var(--muted);
+}
+
 .report-overlay {
   position: fixed;
   inset: 0;
@@ -1842,6 +1882,25 @@ button {
   }
 
   .app.has-place-detail .report-fab {
+    display: none;
+  }
+
+  .visitor-counter {
+    right: auto;
+    bottom: 14px;
+    left: 50%;
+    min-height: 38px;
+    padding: 0 12px;
+    gap: 8px;
+    font-size: 12px;
+    transform: translateX(-50%);
+  }
+
+  .visitor-counter strong {
+    font-size: 14px;
+  }
+
+  .app.has-place-detail .visitor-counter {
     display: none;
   }
 

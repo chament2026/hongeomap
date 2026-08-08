@@ -5,6 +5,7 @@ import { AdminInbox } from "./components/AdminInbox";
 import { NaverMap } from "./components/NaverMap";
 import { ReportButton } from "./components/ReportButton";
 import { Sidebar } from "./components/Sidebar";
+import { VisitorCounter } from "./components/VisitorCounter";
 import { restaurants } from "./data/restaurants";
 import { koreaRegions } from "./data/regions";
 import type { Filters, LocationStatus, Restaurant, SortMode, UserLocation } from "./types";
@@ -239,6 +240,7 @@ function MapApp() {
       )}
 
       <ReportButton />
+      <VisitorCounter />
       <AdminAccess />
     </main>
   );
