@@ -231,36 +231,40 @@ function PlaceSidebar({ restaurant, onBack }: { restaurant: Restaurant; onBack: 
       <div className="place-hero">
         <span>{restaurant.region}</span>
         <h1>{restaurant.name}</h1>
-        <div className="score-meta-row">
-          <ScoreBlock isPlanned={isPlanned} rating={restaurant.rating} />
-          {isPlanned && <span className="visit-status-badge">방문예정</span>}
-        </div>
       </div>
 
-      <section className="full-video">
-        <h2>풀영상 보러가기</h2>
-        {restaurant.youtubeUrl && youtubeThumbnail ? (
-          <a href={restaurant.youtubeUrl} rel="noreferrer" target="_blank">
-            <img alt={`${restaurant.name} 유튜브 썸네일`} src={youtubeThumbnail} />
-          </a>
-        ) : (
-          <div className="video-empty">
-            <PlayCircle size={20} />
-            풀영상 준비 중
-          </div>
-        )}
-      </section>
+      <div className={`visit-preview-zone ${isPlanned ? "is-planned" : ""}`}>
+        <div className="score-meta-row">
+          <ScoreBlock rating={restaurant.rating} />
+        </div>
 
-      <section className="simple-review">
-        <h2>참피디의 한 줄평</h2>
-        <p>{restaurant.simpleReview}</p>
-      </section>
+        <section className="full-video">
+          <h2>풀영상 보러가기</h2>
+          {restaurant.youtubeUrl && youtubeThumbnail ? (
+            <a href={restaurant.youtubeUrl} rel="noreferrer" target="_blank">
+              <img alt={`${restaurant.name} 유튜브 썸네일`} src={youtubeThumbnail} />
+            </a>
+          ) : (
+            <div className="video-empty">
+              <PlayCircle size={20} />
+              풀영상 준비 중
+            </div>
+          )}
+        </section>
 
-      <section className="place-info-list" aria-label="가게 기본 정보">
-        <InfoLine icon={<MapPin size={17} />} label="주소" value={restaurant.address} />
-        <InfoLine icon={<Clock3 size={17} />} label="영업시간" value={restaurant.hours} />
-        <InfoLine icon={<Phone size={17} />} label="전화번호" value={restaurant.phone} />
-      </section>
+        <section className="simple-review">
+          <h2>참피디의 한 줄평</h2>
+          <p>{isPlanned ? "방문 후 참피디의 한 줄평이 업데이트됩니다." : restaurant.simpleReview}</p>
+        </section>
+
+        <section className="place-info-list" aria-label="가게 기본 정보">
+          <InfoLine icon={<MapPin size={17} />} label="주소" value={restaurant.address} />
+          <InfoLine icon={<Clock3 size={17} />} label="영업시간" value={isPlanned ? "확인 중" : restaurant.hours} />
+          <InfoLine icon={<Phone size={17} />} label="전화번호" value={isPlanned && restaurant.phone === "방문예정" ? "확인 중" : restaurant.phone} />
+        </section>
+
+        {isPlanned && <div className="visit-preview-overlay">방문 예정</div>}
+      </div>
 
       <a className="naver-place-button" href={naverPlaceUrl} rel="noreferrer" target="_blank">
         <ExternalLink size={17} />
@@ -299,15 +303,13 @@ function PlaceSidebar({ restaurant, onBack }: { restaurant: Restaurant; onBack: 
   );
 }
 
-function ScoreBlock({ isPlanned = false, rating }: { isPlanned?: boolean; rating?: number }) {
+function ScoreBlock({ rating }: { rating?: number }) {
   const hasRating = typeof rating === "number";
 
   return (
-    <div className={`score-block ${hasRating && !isPlanned ? "" : "is-empty"} ${isPlanned ? "is-planned" : ""}`}>
+    <div className={`score-block ${hasRating ? "" : "is-empty"}`}>
       <span>참피디 평점</span>
-      {isPlanned ? (
-        <strong>방문예정</strong>
-      ) : hasRating ? (
+      {hasRating ? (
         <strong>
           {rating.toFixed(1)}
           <small>/ 5.0</small>
