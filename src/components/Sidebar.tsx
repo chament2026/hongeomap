@@ -180,7 +180,9 @@ export function Sidebar({
       <div className="result-list">
         {results.map((restaurant, index) => (
           <button
-            className={`restaurant-card ${selectedId === restaurant.id ? "is-selected" : ""}`}
+            className={`restaurant-card ${restaurant.visitStatus === "planned" ? "is-planned" : ""} ${
+              selectedId === restaurant.id ? "is-selected" : ""
+            }`}
             key={restaurant.id}
             onClick={() => onSelect(restaurant)}
             type="button"
@@ -200,7 +202,7 @@ export function Sidebar({
               ) : (
                 <>
                   <Star size={15} />
-                  {restaurant.rating ? restaurant.rating.toFixed(1) : "보기"}
+                  {restaurant.visitStatus === "planned" ? "방문예정" : restaurant.rating ? restaurant.rating.toFixed(1) : "보기"}
                 </>
               )}
             </div>
@@ -217,6 +219,7 @@ function PlaceSidebar({ restaurant, onBack }: { restaurant: Restaurant; onBack: 
   const youtubeThumbnail = restaurant.youtubeId
     ? `https://img.youtube.com/vi/${restaurant.youtubeId}/hqdefault.jpg`
     : undefined;
+  const isPlanned = restaurant.visitStatus === "planned";
 
   return (
     <>
@@ -229,7 +232,8 @@ function PlaceSidebar({ restaurant, onBack }: { restaurant: Restaurant; onBack: 
         <span>{restaurant.region}</span>
         <h1>{restaurant.name}</h1>
         <div className="score-meta-row">
-          <ScoreBlock rating={restaurant.rating} />
+          <ScoreBlock isPlanned={isPlanned} rating={restaurant.rating} />
+          {isPlanned && <span className="visit-status-badge">방문예정</span>}
         </div>
       </div>
 
@@ -295,13 +299,15 @@ function PlaceSidebar({ restaurant, onBack }: { restaurant: Restaurant; onBack: 
   );
 }
 
-function ScoreBlock({ rating }: { rating?: number }) {
+function ScoreBlock({ isPlanned = false, rating }: { isPlanned?: boolean; rating?: number }) {
   const hasRating = typeof rating === "number";
 
   return (
-    <div className={`score-block ${hasRating ? "" : "is-empty"}`}>
+    <div className={`score-block ${hasRating && !isPlanned ? "" : "is-empty"} ${isPlanned ? "is-planned" : ""}`}>
       <span>참피디 평점</span>
-      {hasRating ? (
+      {isPlanned ? (
+        <strong>방문예정</strong>
+      ) : hasRating ? (
         <strong>
           {rating.toFixed(1)}
           <small>/ 5.0</small>

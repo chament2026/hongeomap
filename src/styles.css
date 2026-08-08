@@ -17,6 +17,8 @@
   --red-strong: #047857;
   --marker-red: #e11d48;
   --marker-red-strong: #be123c;
+  --marker-planned: #10b981;
+  --marker-planned-strong: #047857;
   --mint: #0f766e;
   --gold: #4d7c0f;
   --surface: rgba(246, 248, 247, 0.86);
@@ -183,6 +185,20 @@ button {
     0 14px 28px rgba(190, 18, 60, 0.34);
 }
 
+.fallback-pin.is-planned {
+  background: var(--marker-planned);
+  box-shadow:
+    0 0 0 3px rgba(255, 255, 255, 0.92),
+    0 10px 20px rgba(4, 120, 87, 0.24);
+}
+
+.fallback-pin.is-planned.is-selected {
+  background: var(--marker-planned-strong);
+  box-shadow:
+    0 0 0 4px rgba(255, 255, 255, 0.96),
+    0 14px 28px rgba(4, 120, 87, 0.34);
+}
+
 .naver-marker {
   display: inline-grid;
   width: 10px;
@@ -217,6 +233,20 @@ button {
     0 0 0 4px rgba(255, 255, 255, 0.96),
     0 14px 28px rgba(190, 18, 60, 0.34);
   transform: translate(-50%, -50%) scale(1.02);
+}
+
+.naver-marker.is-planned {
+  background: var(--marker-planned);
+  box-shadow:
+    0 0 0 3px rgba(255, 255, 255, 0.94),
+    0 10px 22px rgba(4, 120, 87, 0.28);
+}
+
+.naver-marker.is-planned.is-selected {
+  background: var(--marker-planned-strong);
+  box-shadow:
+    0 0 0 4px rgba(255, 255, 255, 0.96),
+    0 14px 28px rgba(4, 120, 87, 0.34);
 }
 
 .naver-marker span {
@@ -541,6 +571,16 @@ button {
   box-shadow: 0 0 0 2px rgba(15, 118, 110, 0.12);
 }
 
+.restaurant-card.is-planned {
+  border-color: rgba(16, 185, 129, 0.25);
+  background: linear-gradient(180deg, rgba(236, 253, 245, 0.94), #fff);
+}
+
+.restaurant-card.is-planned .rank,
+.restaurant-card.is-planned .card-score {
+  color: var(--marker-planned-strong);
+}
+
 .rank {
   color: var(--red);
   font-weight: 800;
@@ -652,11 +692,34 @@ button {
   line-height: 1.2;
 }
 
+.score-block.is-planned {
+  min-width: 168px;
+  border-color: rgba(16, 185, 129, 0.24);
+  background: rgba(236, 253, 245, 0.98);
+}
+
+.score-block.is-planned strong {
+  color: var(--marker-planned-strong);
+  font-size: 30px;
+}
+
 .score-meta-row {
   display: flex;
   flex-wrap: wrap;
   align-items: center;
   gap: 10px;
+}
+
+.visit-status-badge {
+  display: inline-flex;
+  min-height: 34px;
+  align-items: center;
+  padding: 0 12px;
+  border-radius: 999px;
+  color: #065f46;
+  background: rgba(16, 185, 129, 0.14);
+  font-size: 14px;
+  font-weight: 900;
 }
 
 .place-meta-row {

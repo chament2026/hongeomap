@@ -291,11 +291,18 @@ export function NaverMap({ focusedRegion, restaurants, selectedId, onClearSelect
         markerRefs.current.forEach((marker) => marker.setMap(null));
         markerRefs.current = restaurants.map((restaurant) => {
           const isSelected = restaurant.id === selectedId;
+          const markerClassName = [
+            "naver-marker",
+            restaurant.visitStatus === "planned" ? "is-planned" : "",
+            isSelected ? "is-selected" : "",
+          ]
+            .filter(Boolean)
+            .join(" ");
           const marker = new maps.Marker({
             position: new maps.LatLng(restaurant.lat, restaurant.lng),
             map,
             icon: {
-              content: `<div class="naver-marker ${isSelected ? "is-selected" : ""}">${isSelected ? `<span>${escapeHtml(restaurant.name)}</span>` : ""}</div>`,
+              content: `<div class="${markerClassName}">${isSelected ? `<span>${escapeHtml(restaurant.name)}</span>` : ""}</div>`,
               anchor: new maps.Point(0, 0),
             },
             title: restaurant.name,
@@ -435,7 +442,9 @@ function FallbackMap({
       <span className="map-place-label label-busan">부산권</span>
       {restaurants.map((restaurant, index) => (
         <button
-          className={`fallback-pin ${selectedId === restaurant.id ? "is-selected" : ""}`}
+          className={`fallback-pin ${restaurant.visitStatus === "planned" ? "is-planned" : ""} ${
+            selectedId === restaurant.id ? "is-selected" : ""
+          }`}
           key={restaurant.id}
           onClick={(event) => {
             event.stopPropagation();
