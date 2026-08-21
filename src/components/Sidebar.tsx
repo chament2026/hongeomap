@@ -215,7 +215,8 @@ export function Sidebar({
 
 function PlaceSidebar({ restaurant, onBack }: { restaurant: Restaurant; onBack: () => void }) {
   const naverPlaceUrl =
-    restaurant.naverPlaceUrl ?? `https://map.naver.com/p/search/${encodeURIComponent(restaurant.name)}`;
+    restaurant.naverPlaceUrl ??
+    `https://map.naver.com/p/search/${encodeURIComponent(`${restaurant.name} ${restaurant.address}`)}`;
   const youtubeThumbnail = restaurant.youtubeId
     ? `https://img.youtube.com/vi/${restaurant.youtubeId}/hqdefault.jpg`
     : undefined;
@@ -263,7 +264,12 @@ function PlaceSidebar({ restaurant, onBack }: { restaurant: Restaurant; onBack: 
           <InfoLine icon={<Phone size={17} />} label="전화번호" value={isPlanned && restaurant.phone === "방문예정" ? "확인 중" : restaurant.phone} />
         </section>
 
-        {isPlanned && <div className="visit-preview-overlay">방문 예정</div>}
+        {isPlanned && (
+          <div className="visit-preview-overlay">
+            <strong>방문 예정</strong>
+            {restaurant.reportNote && <p>{restaurant.reportNote}</p>}
+          </div>
+        )}
       </div>
 
       <a className="naver-place-button" href={naverPlaceUrl} rel="noreferrer" target="_blank">

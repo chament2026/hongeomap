@@ -38,6 +38,7 @@ export type Restaurant = {
   phone: string;
   naverPlaceUrl?: string;
   simpleReview: string;
+  reportNote?: string;
   menuItems?: MenuItem[];
   menuSourceLabel?: string;
   menuSourceUrl?: string;
