@@ -2,8 +2,8 @@ name: Supabase Keepalive
 
 on:
   schedule:
-    # Runs twice a day in UTC to keep the free Supabase project active.
-    - cron: "17 0,12 * * *"
+    # Runs every 6 hours in UTC to create real database activity.
+    - cron: "17 */6 * * *"
   workflow_dispatch:
 
 jobs:
@@ -82,11 +82,14 @@ jobs:
           echo "Supabase project did not become ready in time."
           exit 1
 
-      - name: Send keepalive request
+      - name: Send database keepalive request
         shell: bash
         run: |
           set -euo pipefail
-          curl -sS --fail-with-body \
+          curl -sS --fail-with-body -X POST \
             -H "apikey: ${SUPABASE_ANON_KEY}" \
-            "${SUPABASE_URL}/auth/v1/health"
+            -H "Authorization: Bearer ${SUPABASE_ANON_KEY}" \
+            -H "Content-Type: application/json" \
+            "${SUPABASE_URL}/rest/v1/rpc/hongeo_keepalive" \
+            -d '{}'
           echo
