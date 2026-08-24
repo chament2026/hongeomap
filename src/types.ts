@@ -2,7 +2,7 @@ export type FermentationLevel = "beginner" | "mild" | "medium" | "strong";
 
 export type PriceRange = "low" | "mid" | "high";
 
-export type SortMode = "default" | "distance" | "rating";
+export type SortMode = "default" | "distance";
 
 export type LocationStatus = "idle" | "requesting" | "ready" | "error" | "unsupported";
 

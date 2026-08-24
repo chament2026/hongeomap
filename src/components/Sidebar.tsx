@@ -9,7 +9,6 @@ import {
   PlayCircle,
   Search,
   SlidersHorizontal,
-  Star,
   Store,
   X,
 } from "lucide-react";
@@ -121,7 +120,6 @@ export function Sidebar({
           label="거리순"
           onClick={() => onSortModeChange("distance")}
         />
-        <SortButton active={sortMode === "rating"} icon={<Star size={14} />} label="평점순" onClick={() => onSortModeChange("rating")} />
       </div>
 
       {sortMode === "distance" && locationStatus !== "ready" && (
@@ -201,8 +199,8 @@ export function Sidebar({
                 </>
               ) : (
                 <>
-                  <Star size={15} />
-                  {restaurant.visitStatus === "planned" ? "방문예정" : restaurant.rating ? restaurant.rating.toFixed(1) : "보기"}
+                  <Store size={15} />
+                  {restaurant.visitStatus === "planned" ? "방문예정" : "방문완료"}
                 </>
               )}
             </div>
@@ -235,10 +233,6 @@ function PlaceSidebar({ restaurant, onBack }: { restaurant: Restaurant; onBack: 
       </div>
 
       <div className={`visit-preview-zone ${isPlanned ? "is-planned" : ""}`}>
-        <div className="score-meta-row">
-          <ScoreBlock rating={restaurant.rating} />
-        </div>
-
         <section className="full-video">
           <h2>풀영상 보러가기</h2>
           {restaurant.youtubeUrl && youtubeThumbnail ? (
@@ -306,24 +300,6 @@ function PlaceSidebar({ restaurant, onBack }: { restaurant: Restaurant; onBack: 
         </section>
       ) : null}
     </>
-  );
-}
-
-function ScoreBlock({ rating }: { rating?: number }) {
-  const hasRating = typeof rating === "number";
-
-  return (
-    <div className={`score-block ${hasRating ? "" : "is-empty"}`}>
-      <span>참피디 평점</span>
-      {hasRating ? (
-        <strong>
-          {rating.toFixed(1)}
-          <small>/ 5.0</small>
-        </strong>
-      ) : (
-        <strong>평점 준비중</strong>
-      )}
-    </div>
   );
 }
 

@@ -656,49 +656,6 @@ button {
   line-height: 1.18;
 }
 
-.score-block {
-  display: grid;
-  gap: 2px;
-  width: fit-content;
-  min-width: 138px;
-  padding: 12px 14px;
-  border: 1px solid rgba(5, 150, 105, 0.14);
-  border-radius: 8px;
-  background: rgba(5, 150, 105, 0.07);
-}
-
-.score-block > span {
-  color: var(--red-strong);
-  font-size: 12px;
-  font-weight: 900;
-}
-
-.score-block strong {
-  color: var(--red-strong);
-  font-size: 34px;
-  line-height: 1;
-}
-
-.score-block small {
-  margin-left: 5px;
-  color: var(--muted);
-  font-size: 14px;
-  font-weight: 900;
-}
-
-.score-block.is-empty strong {
-  color: var(--muted);
-  font-size: 22px;
-  line-height: 1.2;
-}
-
-.score-meta-row {
-  display: flex;
-  flex-wrap: wrap;
-  align-items: center;
-  gap: 10px;
-}
-
 .visit-preview-zone {
   position: relative;
   display: grid;

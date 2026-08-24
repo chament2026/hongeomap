@@ -91,10 +91,6 @@ function MapApp() {
       return next;
     }
 
-    if (sortMode === "rating") {
-      next.sort((a, b) => (b.rating ?? -1) - (a.rating ?? -1));
-    }
-
     return next;
   }, [distanceByRestaurantId, filteredRestaurants, sortMode, userLocation]);
 
