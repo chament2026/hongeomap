@@ -6,8 +6,8 @@ import { NaverMap } from "./components/NaverMap";
 import { ReportButton } from "./components/ReportButton";
 import { Sidebar } from "./components/Sidebar";
 import { VisitorCounter } from "./components/VisitorCounter";
-import { restaurants } from "./data/restaurants";
 import { koreaRegions } from "./data/regions";
+import { usePublishedRestaurants } from "./lib/usePublishedRestaurants";
 import type { Filters, LocationStatus, Restaurant, SortMode, UserLocation } from "./types";
 
 const initialFilters: Filters = {
@@ -38,8 +38,10 @@ function App() {
 }
 
 function MapApp() {
+  const restaurants = usePublishedRestaurants();
   const [filters, setFilters] = useState<Filters>(initialFilters);
-  const [selectedRestaurant, setSelectedRestaurant] = useState<Restaurant | undefined>();
+  const [selectedId, setSelectedId] = useState<string | undefined>();
+  const selectedRestaurant = restaurants.find((restaurant) => restaurant.id === selectedId);
   const [sortMode, setSortMode] = useState<SortMode>("default");
   const [userLocation, setUserLocation] = useState<UserLocation | undefined>(() => readStoredLocation());
   const [locationStatus, setLocationStatus] = useState<LocationStatus>(() => (readStoredLocation() ? "ready" : "idle"));
@@ -65,7 +67,7 @@ function MapApp() {
 
       return matchesQuery && matchesRegion && matchesDistrict;
     });
-  }, [filters]);
+  }, [filters, restaurants]);
 
   const distanceByRestaurantId = useMemo(() => {
     if (!userLocation) {
@@ -81,7 +83,7 @@ function MapApp() {
         }),
       ]),
     );
-  }, [userLocation]);
+  }, [restaurants, userLocation]);
 
   const visibleRestaurants = useMemo(() => {
     const next = [...filteredRestaurants];
@@ -95,7 +97,7 @@ function MapApp() {
   }, [distanceByRestaurantId, filteredRestaurants, sortMode, userLocation]);
 
   const handleSelect = (restaurant: Restaurant) => {
-    setSelectedRestaurant(restaurant);
+    setSelectedId(restaurant.id);
     setIsMobileDrawerOpen(false);
   };
 
@@ -149,7 +151,7 @@ function MapApp() {
     }
 
     if (!visibleRestaurants.some((restaurant) => restaurant.id === selectedRestaurant.id)) {
-      setSelectedRestaurant(undefined);
+      setSelectedId(undefined);
     }
   }, [selectedRestaurant, visibleRestaurants]);
 
@@ -187,7 +189,7 @@ function MapApp() {
         focusedRegion={mapFocus}
         restaurants={visibleRestaurants}
         selectedId={selectedRestaurant?.id}
-        onClearSelection={() => setSelectedRestaurant(undefined)}
+        onClearSelection={() => setSelectedId(undefined)}
         onSelect={handleSelect}
       />
 
@@ -201,7 +203,7 @@ function MapApp() {
         selectedId={selectedRestaurant?.id}
         sortMode={sortMode}
         mobileDrawerOpen={isMobileDrawerOpen}
-        onClearSelection={() => setSelectedRestaurant(undefined)}
+        onClearSelection={() => setSelectedId(undefined)}
         onFiltersChange={setFilters}
         onSelect={handleSelect}
         onSortModeChange={handleSortModeChange}
