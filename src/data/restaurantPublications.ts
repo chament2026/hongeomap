@@ -15,6 +15,13 @@ export const restaurantPublications = [
     youtubeId: "V0zl__ZEcmI",
     youtubeUrl: "https://youtu.be/V0zl__ZEcmI",
   },
+  {
+    restaurantId: "planned-okja-samhap-gwangju",
+    publishAt: "2026-11-22T16:45:00+09:00",
+    simpleReview: "간판은 없지만 내공은 있는 집",
+    youtubeId: "4MYRyBJ-bC4",
+    youtubeUrl: "https://youtu.be/4MYRyBJ-bC4",
+  },
 ];
 
 export function applyRestaurantPublications(restaurants: Restaurant[], now: number): Restaurant[] {

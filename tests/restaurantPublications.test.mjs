@@ -71,3 +71,37 @@ test("Namdo publishes only at November 2, 16:45 Korea time", () => {
   assert.equal(findAnyang(before).visitStatus, "visited");
   assert.equal(findAnyang(before).youtubeId, "1qzZOL3YD-8");
 });
+
+test("Okja Samhap publishes only at November 22, 16:45 Korea time", () => {
+  const okjaId = "planned-okja-samhap-gwangju";
+  const matchingPublications = restaurantPublications.filter((item) => item.restaurantId === okjaId);
+  assert.equal(matchingPublications.length, 1);
+
+  const okjaPublication = matchingPublications[0];
+  const okjaPublishTime = Date.parse(okjaPublication.publishAt);
+  assert.equal(new Date(okjaPublishTime).toISOString(), "2026-11-22T07:45:00.000Z");
+
+  const before = applyRestaurantPublications(restaurants, okjaPublishTime - 1);
+  const beforeOkja = before.find((item) => item.id === okjaId);
+  assert.equal(beforeOkja.visitStatus, "planned");
+  assert.equal(beforeOkja.youtubeUrl, undefined);
+  assert.notEqual(beforeOkja.simpleReview, okjaPublication.simpleReview);
+
+  for (const now of [okjaPublishTime, okjaPublishTime + 86_400_000]) {
+    const after = applyRestaurantPublications(restaurants, now);
+    const okja = after.find((item) => item.id === okjaId);
+    assert.equal(okja.visitStatus, "visited");
+    assert.equal(okja.youtubeId, "4MYRyBJ-bC4");
+    assert.equal(okja.youtubeUrl, "https://youtu.be/4MYRyBJ-bC4");
+    assert.equal(okja.simpleReview, "간판은 없지만 내공은 있는 집");
+    assert.equal(okja.region, "광주 북구");
+    assert.equal(okja.address, "광주 북구 금녕길 29");
+    assert.ok(!okja.tags.includes("방문예정"));
+    assert.ok(okja.tags.includes("영상리뷰"));
+    assert.deepEqual(after.filter((item) => item.id !== okjaId), before.filter((item) => item.id !== okjaId));
+  }
+
+  assert.equal(restaurants.find((item) => item.id === okjaId).visitStatus, "planned");
+  assert.equal(findAnyang(before).visitStatus, "visited");
+  assert.equal(before.find((item) => item.id === "planned-namdo-seasonal-yeongdeungpo").visitStatus, "visited");
+});
