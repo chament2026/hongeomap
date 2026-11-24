@@ -1115,6 +1115,32 @@ button {
   line-height: 1.5;
 }
 
+.report-contact-purpose,
+.report-form-error {
+  margin: 0;
+  font-size: 12px;
+  line-height: 1.55;
+}
+
+.report-contact-purpose {
+  color: var(--muted);
+}
+
+.report-form-error {
+  color: var(--red-strong);
+}
+
+.admin-report-contact {
+  margin-block: 12px;
+  overflow-wrap: anywhere;
+}
+
+.admin-report-contact summary {
+  color: var(--muted);
+  cursor: pointer;
+  font-size: 13px;
+}
+
 .report-submit,
 .report-result button {
   min-height: 44px;

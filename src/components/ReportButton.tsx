@@ -1,45 +1,56 @@
 import { Send, X } from "lucide-react";
-import { FormEvent, useMemo, useState } from "react";
+import { FormEvent, useState } from "react";
 import { isReportBackendConfigured, submitReport } from "../lib/reportBackend";
 
-type ReportForm = {
-  restaurantName: string;
-  address: string;
-  message: string;
-};
+import {
+  emailMaxLength,
+  nicknameMaxLength,
+  validateReportSubmission,
+  type ReportSubmission,
+} from "../lib/reportInboxModel";
 
-const initialForm: ReportForm = {
+const initialForm: ReportSubmission = {
   restaurantName: "",
   address: "",
   message: "",
+  nickname: "",
+  email: "",
 };
 
 export function ReportButton() {
   const [isOpen, setIsOpen] = useState(false);
-  const [form, setForm] = useState<ReportForm>(initialForm);
-  const [submitState, setSubmitState] = useState<"idle" | "submitting" | "sent" | "copy-ready" | "error">("idle");
+  const [form, setForm] = useState<ReportSubmission>(initialForm);
+  const [submitState, setSubmitState] = useState<"idle" | "submitting" | "sent" | "error">("idle");
 
-  const reportText = useMemo(
-    () =>
-      [
-        "[홍어맛집 제보]",
-        `가게명: ${form.restaurantName || "미입력"}`,
-        `주소/지역: ${form.address || "미입력"}`,
-        `제보 내용: ${form.message || "미입력"}`,
-      ].join("\n"),
-    [form],
-  );
+  const [formError, setFormError] = useState<string | null>(null);
 
-  const updateField = (key: keyof ReportForm, value: string) => {
+  const updateField = (key: keyof ReportSubmission, value: string) => {
+    if (submitState === "submitting") return;
     setForm((current) => ({ ...current, [key]: value }));
+    setFormError(null);
+    setSubmitState("idle");
+  };
+
+  const closeReport = () => {
+    if (submitState === "submitting") return;
+    setIsOpen(false);
+    setForm(initialForm);
+    setFormError(null);
     setSubmitState("idle");
   };
 
   const handleSubmit = async (event: FormEvent<HTMLFormElement>) => {
     event.preventDefault();
+    if (submitState === "submitting") return;
+
+    const validationError = validateReportSubmission(form);
+    if (validationError) {
+      setFormError(validationError);
+      return;
+    }
 
     if (!isReportBackendConfigured) {
-      setSubmitState("copy-ready");
+      setSubmitState("error");
       return;
     }
 
@@ -52,10 +63,6 @@ export function ReportButton() {
     } catch {
       setSubmitState("error");
     }
-  };
-
-  const copyReport = async () => {
-    await navigator.clipboard.writeText(reportText);
   };
 
   return (
@@ -73,7 +80,7 @@ export function ReportButton() {
                 <h2>홍어맛집 제보하기</h2>
                 <p>새로 가볼 만한 홍어집을 알려주세요.</p>
               </div>
-              <button aria-label="제보창 닫기" onClick={() => setIsOpen(false)} type="button">
+              <button aria-label="제보창 닫기" disabled={submitState === "submitting"} onClick={closeReport} type="button">
                 <X size={18} />
               </button>
             </div>
@@ -106,6 +113,35 @@ export function ReportButton() {
                 />
               </label>
 
+              <label>
+                <span>닉네임 (선택)</span>
+                <input
+                  aria-describedby="report-contact-purpose"
+                  autoComplete="nickname"
+                  maxLength={nicknameMaxLength}
+                  name="report-nickname"
+                  onChange={(event) => updateField("nickname", event.target.value)}
+                  type="text"
+                  value={form.nickname}
+                />
+              </label>
+              <label>
+                <span>이메일 (선택)</span>
+                <input
+                  aria-describedby="report-contact-purpose"
+                  autoComplete="email"
+                  maxLength={emailMaxLength}
+                  name="report-email"
+                  onChange={(event) => updateField("email", event.target.value)}
+                  type="email"
+                  value={form.email}
+                />
+              </label>
+              <p className="report-contact-purpose" id="report-contact-purpose">
+                이메일은 운영자가 제보를 확인하고 필요한 경우 연락하는 데만 사용합니다.
+              </p>
+              {formError && <p className="report-form-error" role="alert">{formError}</p>}
+
               <button className="report-submit" disabled={submitState === "submitting"} type="submit">
                 {submitState === "submitting" ? "보내는 중" : "제보하기"}
               </button>
@@ -118,23 +154,10 @@ export function ReportButton() {
               </div>
             )}
 
-            {submitState === "copy-ready" && (
-              <div className="report-result">
-                <strong>제보 내용이 준비됐습니다</strong>
-                <p>쪽지함 연결값을 넣으면 자동 전송됩니다. 지금은 아래 버튼으로 내용을 복사할 수 있습니다.</p>
-                <button onClick={copyReport} type="button">
-                  제보 내용 복사
-                </button>
-              </div>
-            )}
-
             {submitState === "error" && (
               <div className="report-result is-error">
                 <strong>전송에 실패했습니다</strong>
-                <p>잠시 후 다시 시도하거나 아래 내용 복사로 제보를 전달해주세요.</p>
-                <button onClick={copyReport} type="button">
-                  제보 내용 복사
-                </button>
+                <p>잠시 후 다시 시도해주세요.</p>
               </div>
             )}
           </section>

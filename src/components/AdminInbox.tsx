@@ -1,5 +1,5 @@
-import { Archive, CheckCircle2, Inbox, Lock, LogOut, Mail, RefreshCw } from "lucide-react";
-import { FormEvent, useEffect, useMemo, useState } from "react";
+import { Archive, CheckCircle2, Inbox, LogOut, Mail, RefreshCw } from "lucide-react";
+import { FormEvent, useEffect, useMemo, useRef, useState } from "react";
 import {
   clearStoredAdminSession,
   fetchReportMessages,
@@ -9,8 +9,8 @@ import {
   updateReportStatus,
   verifyAdminSession,
   type AdminSession,
-  type ReportMessage,
 } from "../lib/reportBackend";
+import { filterReportMessages, getReportCounts, type ReportFilter, type ReportMessage } from "../lib/reportInboxModel";
 
 export function AdminInbox() {
   const [session, setSession] = useState<AdminSession | undefined>(() =>
@@ -20,55 +20,63 @@ export function AdminInbox() {
   const [loginId, setLoginId] = useState("");
   const [password, setPassword] = useState("");
   const [status, setStatus] = useState<"idle" | "loading" | "error">("idle");
-  const [statusFilter, setStatusFilter] = useState<"all" | ReportMessage["status"]>("all");
+  const [statusFilter, setStatusFilter] = useState<ReportFilter>("new");
+  const [hasLoaded, setHasLoaded] = useState(false);
+  const [isChangingStatus, setIsChangingStatus] = useState(false);
+  const loadRevision = useRef(0);
 
-  const messageCounts = useMemo(
-    () => ({
-      all: messages.length,
-      new: messages.filter((message) => message.status === "new").length,
-      read: messages.filter((message) => message.status === "read").length,
-      archived: messages.filter((message) => message.status === "archived").length,
-    }),
-    [messages],
-  );
-
-  const filteredMessages = useMemo(() => {
-    if (statusFilter === "all") {
-      return messages;
-    }
-
-    return messages.filter((message) => message.status === statusFilter);
-  }, [messages, statusFilter]);
+  const messageCounts = useMemo(() => getReportCounts(messages), [messages]);
+  const filteredMessages = useMemo(() => filterReportMessages(messages, statusFilter), [messages, statusFilter]);
+  const statusTabs = [
+    ["new", "새 제보", messageCounts.new],
+    ["all", "전체", messageCounts.all],
+    ["read", "읽음", messageCounts.read],
+    ["archived", "보관", messageCounts.archived],
+  ] as const;
 
   const loadMessages = async (activeSession = session) => {
-    if (!activeSession) {
-      return;
-    }
-
+    if (!activeSession) return;
+    const revision = ++loadRevision.current;
     setStatus("loading");
 
     try {
-      setMessages(await fetchReportMessages(activeSession.accessToken));
+      const nextMessages = await fetchReportMessages(activeSession.accessToken);
+      if (revision !== loadRevision.current) return;
+      setMessages(nextMessages);
+      setHasLoaded(true);
       setStatus("idle");
     } catch {
-      setStatus("error");
+      if (revision === loadRevision.current) {
+        setMessages([]);
+        setHasLoaded(false);
+        setStatus("error");
+      }
     }
   };
 
   useEffect(() => {
-    if (!session) {
-      return;
-    }
+    if (!session) return;
+    let isCurrent = true;
 
     verifyAdminSession(session.accessToken).then((isAdmin) => {
+      if (!isCurrent) return;
       if (!isAdmin) {
         clearStoredAdminSession();
+        setMessages([]);
+        setHasLoaded(false);
         setSession(undefined);
         return;
       }
 
       void loadMessages(session);
+    }).catch(() => {
+      if (isCurrent) setStatus("error");
     });
+
+    return () => {
+      isCurrent = false;
+      loadRevision.current += 1;
+    };
   }, [session]);
 
   const handleSignIn = async (event: FormEvent<HTMLFormElement>) => {
@@ -86,25 +94,33 @@ export function AdminInbox() {
     }
   };
 
-  const handleStatusChange = async (messageId: string, nextStatus: ReportMessage["status"]) => {
-    if (!session) {
-      return;
-    }
+  const handleStatusChange = async (report: ReportMessage, nextStatus: ReportMessage["status"]) => {
+    if (!session || isChangingStatus) return;
+    const revision = loadRevision.current;
+    setIsChangingStatus(true);
 
     try {
-      await updateReportStatus(session.accessToken, messageId, nextStatus);
+      await updateReportStatus(session.accessToken, report, nextStatus);
+      if (revision !== loadRevision.current) return;
       setMessages((current) =>
-        current.map((message) => (message.id === messageId ? { ...message, status: nextStatus } : message)),
+        current.map((message) => (message.id === report.id ? { ...message, status: nextStatus } : message)),
       );
     } catch {
-      setStatus("error");
+      if (revision === loadRevision.current) setStatus("error");
+    } finally {
+      if (revision === loadRevision.current) setIsChangingStatus(false);
     }
   };
 
   const handleSignOut = () => {
+    loadRevision.current += 1;
     clearStoredAdminSession();
     setSession(undefined);
     setMessages([]);
+    setHasLoaded(false);
+    setIsChangingStatus(false);
+    setStatus("idle");
+    setStatusFilter("new");
   };
 
   if (!isReportBackendConfigured) {
@@ -187,7 +203,7 @@ export function AdminInbox() {
             <a className="admin-home-link" href="/">
               홍어맵
             </a>
-            <button onClick={() => loadMessages()} type="button">
+            <button disabled={status === "loading" || isChangingStatus} onClick={() => loadMessages()} type="button">
               <RefreshCw size={16} />
               새로고침
             </button>
@@ -201,21 +217,16 @@ export function AdminInbox() {
         {status === "error" && <p className="admin-error">쪽지함을 불러오지 못했습니다. 다시 시도해주세요.</p>}
 
         <div className="admin-status-tabs" aria-label="제보 상태 필터">
-          {[
-            ["all", "전체", messageCounts.all],
-            ["new", "새 제보", messageCounts.new],
-            ["read", "읽음", messageCounts.read],
-            ["archived", "보관", messageCounts.archived],
-          ].map(([key, label, count]) => (
+          {statusTabs.map(([key, label, count]) => (
             <button
               aria-pressed={statusFilter === key}
               className={statusFilter === key ? "is-active" : ""}
               key={key}
-              onClick={() => setStatusFilter(key as typeof statusFilter)}
+              onClick={() => setStatusFilter(key)}
               type="button"
             >
               <span>{label}</span>
-              <strong>{count}</strong>
+              <strong>{hasLoaded ? count : "–"}</strong>
             </button>
           ))}
         </div>
@@ -227,7 +238,7 @@ export function AdminInbox() {
               <strong>제보글을 불러오는 중입니다</strong>
               <p>잠시만 기다려주세요.</p>
             </div>
-          ) : filteredMessages.length === 0 ? (
+          ) : !hasLoaded ? null : filteredMessages.length === 0 ? (
             <div className="admin-empty">
               <Mail size={22} />
               <strong>{messages.length === 0 ? "아직 도착한 제보가 없습니다" : "이 상태의 제보가 없습니다"}</strong>
@@ -257,12 +268,31 @@ export function AdminInbox() {
                     <dd>{message.message || "미입력"}</dd>
                   </div>
                 </dl>
+                {(message.submitter_nickname || message.submitter_email) && (
+                  <details className="admin-report-contact">
+                    <summary>제보자 정보 (운영자 전용)</summary>
+                    <dl>
+                      {message.submitter_nickname && (
+                        <div>
+                          <dt>닉네임</dt>
+                          <dd>{message.submitter_nickname}</dd>
+                        </div>
+                      )}
+                      {message.submitter_email && (
+                        <div>
+                          <dt>이메일</dt>
+                          <dd>{message.submitter_email}</dd>
+                        </div>
+                      )}
+                    </dl>
+                  </details>
+                )}
                 <div className="admin-message-actions">
-                  <button onClick={() => handleStatusChange(message.id, "read")} type="button">
+                  <button disabled={isChangingStatus || message.status === "read"} onClick={() => handleStatusChange(message, "read")} type="button">
                     <CheckCircle2 size={15} />
                     읽음
                   </button>
-                  <button onClick={() => handleStatusChange(message.id, "archived")} type="button">
+                  <button disabled={isChangingStatus || message.status === "archived"} onClick={() => handleStatusChange(message, "archived")} type="button">
                     <Archive size={15} />
                     보관
                   </button>

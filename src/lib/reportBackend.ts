@@ -1,21 +1,9 @@
-export type ReportSubmission = {
-  restaurantName: string;
-  address: string;
-  message: string;
-};
+import { collectReportMessages, makeReportPayload, type ReportMessage, type ReportSubmission } from "./reportInboxModel";
+export type { ReportMessage } from "./reportInboxModel";
 
 export type AdminSession = {
   accessToken: string;
   loginId: string;
-};
-
-export type ReportMessage = {
-  id: string;
-  restaurant_name: string;
-  address: string | null;
-  message: string | null;
-  status: "new" | "read" | "archived";
-  created_at: string;
 };
 
 const defaultSupabaseUrl = "https://lqlccyghzxhrbvyzpqkr.supabase.co";
@@ -57,11 +45,7 @@ export async function submitReport(submission: ReportSubmission) {
       ...getHeaders(),
       Prefer: "return=minimal",
     },
-    body: JSON.stringify({
-      restaurant_name: submission.restaurantName.trim(),
-      address: submission.address.trim() || null,
-      message: submission.message.trim() || null,
-    }),
+    body: JSON.stringify(makeReportPayload(submission)),
   });
 
   if (!response.ok) {
@@ -137,19 +121,15 @@ export function clearStoredAdminSession() {
 
 export async function fetchReportMessages(accessToken: string) {
   const backend = assertReportBackend();
-  const params = new URLSearchParams({
-    order: "created_at.desc",
-    select: "id,restaurant_name,address,message,status,created_at",
-  });
-  const response = await fetch(`${backend.url}/rest/v1/hongeo_reports?${params.toString()}`, {
-    headers: getHeaders(accessToken),
-  });
+  return collectReportMessages(async (params) => {
+    const response = await fetch(`${backend.url}/rest/v1/hongeo_reports?${params.toString()}`, {
+      headers: getHeaders(accessToken),
+      cache: "no-store",
+    });
 
-  if (!response.ok) {
-    throw new Error("REPORT_FETCH_FAILED");
-  }
-
-  return (await response.json()) as ReportMessage[];
+    if (!response.ok) throw new Error("REPORT_FETCH_FAILED");
+    return (await response.json()) as ReportMessage[];
+  });
 }
 
 export async function verifyAdminSession(accessToken: string) {
@@ -170,18 +150,23 @@ export async function verifyAdminSession(accessToken: string) {
   return rows.length > 0;
 }
 
-export async function updateReportStatus(accessToken: string, id: string, status: ReportMessage["status"]) {
+export async function updateReportStatus(accessToken: string, report: Pick<ReportMessage, "id" | "status">, status: ReportMessage["status"]) {
   const backend = assertReportBackend();
-  const response = await fetch(`${backend.url}/rest/v1/hongeo_reports?id=eq.${encodeURIComponent(id)}`, {
+  const params = new URLSearchParams({ id: `eq.${report.id}`, status: `eq.${report.status}`, select: "id,status" });
+  const response = await fetch(`${backend.url}/rest/v1/hongeo_reports?${params}`, {
     method: "PATCH",
     headers: {
       ...getHeaders(accessToken),
-      Prefer: "return=minimal",
+      Prefer: "return=representation",
     },
     body: JSON.stringify({ status }),
   });
 
   if (!response.ok) {
     throw new Error("REPORT_UPDATE_FAILED");
+  }
+  const changed = (await response.json()) as Pick<ReportMessage, "id" | "status">[];
+  if (changed.length !== 1 || changed[0].id !== report.id || changed[0].status !== status) {
+    throw new Error("REPORT_NOT_UPDATED");
   }
 }
